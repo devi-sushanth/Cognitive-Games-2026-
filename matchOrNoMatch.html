@@ -4,25 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Match Game</title>
-
 <style>
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-
 body {
   font-family: Arial, sans-serif;
   background: #f5f6fa;
   overflow-x: hidden;
 }
-
 button {
   pointer-events: auto;
   cursor: pointer;
 }
-
 .header {
   width: 100%;
   height: 60px;
@@ -36,11 +32,9 @@ button {
   left: 0;
   z-index: 1000;
 }
-
 .header h2 {
   font-size: 20px;
 }
-
 .back-btn {
   position: absolute;
   left: 15px;
@@ -50,7 +44,6 @@ button {
   color: #6c5ce7;
   font-weight: bold;
 }
-
 #menuScreen {
   width: 100%;
   min-height: 100vh;
@@ -62,7 +55,6 @@ button {
   justify-content: center;
   gap: 20px;
 }
-
 .menu-card,
 .how-card {
   width: 90%;
@@ -71,12 +63,10 @@ button {
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
-
 .menu-card {
   padding: 30px 20px;
   text-align: center;
 }
-
 .icon {
   width: 80px;
   height: 80px;
@@ -89,12 +79,10 @@ button {
   font-size: 36px;
   color: white;
 }
-
 .menu-card h1 {
   margin-top: 15px;
   font-size: 34px;
 }
-
 .tag {
   display: inline-block;
   margin-top: 10px;
@@ -104,28 +92,23 @@ button {
   border-radius: 20px;
   font-size: 13px;
 }
-
 .desc {
   margin-top: 15px;
   color: #666;
   font-size: 15px;
 }
-
 .how-card {
   padding: 25px;
 }
-
 .how-card h2 {
   margin-bottom: 15px;
 }
-
 .step {
   display: flex;
   align-items: center;
   gap: 12px;
   margin: 12px 0;
 }
-
 .num {
   width: 34px;
   height: 34px;
@@ -136,7 +119,6 @@ button {
   justify-content: center;
   font-weight: bold;
 }
-
 .start-btn {
   width: 90%;
   max-width: 420px;
@@ -148,7 +130,6 @@ button {
   font-size: 22px;
   font-weight: bold;
 }
-
 #gameScreen {
   display: none;
   width: 100%;
@@ -160,7 +141,6 @@ button {
   text-align: center;
   overflow-y: auto;
 }
-
 .top-bar {
   width: 95%;
   max-width: 560px;
@@ -170,7 +150,6 @@ button {
   font-weight: bold;
   font-size: 14px;
 }
-
 .rule {
   font-size: 22px;
   font-weight: bold;
@@ -179,7 +158,6 @@ button {
   max-width: 560px;
   line-height: 1.3;
 }
-
 .panels {
   width: 100%;
   max-width: 560px;
@@ -189,7 +167,6 @@ button {
   gap: 60px;
   margin: 30px auto 40px auto;
 }
-
 .panel {
   width: 170px;
   height: 170px;
@@ -198,26 +175,22 @@ button {
   justify-content: center;
   position: relative;
 }
-
 .panel > * {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
-
 .circle {
   width: 90px;
   height: 90px;
   border-radius: 50%;
 }
-
 .square {
   width: 90px;
   height: 90px;
   border-radius: 10px;
 }
-
 .triangle {
   width: 0;
   height: 0;
@@ -225,14 +198,12 @@ button {
   border-right: 45px solid transparent;
   border-bottom: 90px solid;
 }
-
 .pattern-row {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 28px;
 }
-
 .pattern-grid {
   width: 120px;
   height: 120px;
@@ -241,19 +212,16 @@ button {
   place-items: center;
   gap: 12px;
 }
-
 .mini-circle {
   width: 34px;
   height: 34px;
   border-radius: 50%;
 }
-
 .mini-square {
   width: 34px;
   height: 34px;
   border-radius: 6px;
 }
-
 .mini-triangle {
   width: 0;
   height: 0;
@@ -261,7 +229,6 @@ button {
   border-right: 18px solid transparent;
   border-bottom: 34px solid;
 }
-
 .buttons {
   width: 100%;
   max-width: 420px;
@@ -271,7 +238,6 @@ button {
   gap: 16px;
   margin: 0 auto;
 }
-
 .buttons button {
   width: 170px;
   height: 56px;
@@ -281,15 +247,12 @@ button {
   font-size: 18px;
   font-weight: bold;
 }
-
 .match {
   background: #e57373;
 }
-
 .nomatch {
   background: #4fc3f7;
 }
-
 #message {
   margin-top: 18px;
   font-size: 24px;
@@ -297,6 +260,7 @@ button {
   min-height: 30px;
 }
 
+/* ── Game-over screen ─────────────────────────────────────── */
 #gameOver {
   display: none;
   width: 100%;
@@ -306,17 +270,15 @@ button {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  gap: 0;
 }
-
 #gameOver h1 {
   font-size: 40px;
 }
-
 #gameOver h2 {
   margin-top: 15px;
   color: #6c5ce7;
 }
-
 .restart {
   margin-top: 25px;
   width: 220px;
@@ -328,43 +290,49 @@ button {
   font-size: 20px;
   font-weight: bold;
 }
+/* FIX: style for the new Back to Menu button on the game-over screen */
+.back-to-menu-btn {
+  margin-top: 14px;
+  width: 220px;
+  height: 55px;
+  border: none;
+  border-radius: 14px;
+  background: #636e72;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
 @media(max-width:500px) {
   .top-bar {
     font-size: 12px;
   }
-
   .rule {
     font-size: 18px;
   }
-
   .panels {
     gap: 36px;
   }
-
   .panel {
     width: 130px;
     height: 130px;
   }
-
   .circle,
   .square {
     width: 75px;
     height: 75px;
   }
-
   .triangle {
     border-left: 38px solid transparent;
     border-right: 38px solid transparent;
     border-bottom: 76px solid;
   }
-
   .buttons {
     width: 90%;
     max-width: 380px;
     gap: 14px;
   }
-
   .buttons button {
     flex: 1;
     width: auto;
@@ -372,7 +340,6 @@ button {
     font-size: 15px;
   }
 }
-
 @media (orientation: landscape) and (max-height: 500px) {
   #gameScreen {
     justify-content: flex-start;
@@ -380,95 +347,81 @@ button {
     padding-bottom: 20px;
     overflow-y: auto;
   }
-
   .top-bar {
     width: 92%;
     font-size: 12px;
     margin-bottom: 8px;
   }
-
   .rule {
     font-size: 18px;
     margin-bottom: 10px;
   }
-
   .panels {
     gap: 40px;
     margin-top: 10px;
     margin-bottom: 18px;
   }
-
   .panel {
     width: 100px;
     height: 100px;
   }
-
   .circle,
   .square {
     width: 62px;
     height: 62px;
   }
-
   .triangle {
     border-left: 31px solid transparent;
     border-right: 31px solid transparent;
     border-bottom: 62px solid;
   }
-
   .pattern-grid {
     width: 85px;
     height: 85px;
     gap: 6px;
   }
-
   .mini-circle,
   .mini-square {
     width: 24px;
     height: 24px;
   }
-
   .mini-triangle {
     border-left: 12px solid transparent;
     border-right: 12px solid transparent;
     border-bottom: 24px solid;
   }
-
   .buttons {
     max-width: 340px;
     gap: 10px;
   }
-
   .buttons button {
     height: 42px;
     font-size: 13px;
   }
-
   #message {
     margin-top: 8px;
     font-size: 16px;
   }
 }
-  /* ── Dark mode ───────────────────────────────────────────────────────────────── */
+/* ── Dark mode ─────────────────────────────────────────────── */
 [data-theme="dark"]  body        { background: #141414; color: #f0ede8; }
-[data-theme="dark"] .header        { background: #1f1f1f; border-bottom-color: #333; color: #f0ede8; }
-[data-theme="dark"].back-btn      {color:#a89cf7;  }  
-[data-theme="dark"] .back-btn:hover      { background: rgba(168,156,247,0.15); }
+[data-theme="dark"] .header      { background: #1f1f1f; border-bottom-color: #333; color: #f0ede8; }
+[data-theme="dark"] .back-btn    { color: #a89cf7; }
+[data-theme="dark"] .back-btn:hover { background: rgba(168,156,247,0.15); }
 [data-theme="dark"] .menu-card,
-[data-theme="dark"] .how-card       { background: #1f1f1f; box-shadow: 0 6px 25px rgba(0,0,0,0.4); color: #f0ede8; }
+[data-theme="dark"] .how-card    { background: #1f1f1f; box-shadow: 0 6px 25px rgba(0,0,0,0.4); color: #f0ede8; }
 [data-theme="dark"] .menu-card h2,
-[data-theme="dark"] .how-card h3     { color: #f0ede8; }
-[data-theme="dark"] .desc     { color: #9a9590; }
-[data-theme="dark"] .domain-tag    { background: rgba(108,92,231,0.2); color: #a89cf7; }
+[data-theme="dark"] .how-card h3 { color: #f0ede8; }
+[data-theme="dark"] .desc        { color: #9a9590; }
+[data-theme="dark"] .domain-tag  { background: rgba(108,92,231,0.2); color: #a89cf7; }
 [data-theme="dark"] .num         { background: #2a2a2a; color: #f0ede8; }
-[data-theme="dark"] #rule      { color: #9a9590; }
+[data-theme="dark"] #rule        { color: #9a9590; }
 [data-theme="dark"] .top-bar,
 [data-theme="dark"] #message,
-[data-theme="dark"] #gameOver { color: #f0ede8; }
+[data-theme="dark"] #gameOver    { color: #f0ede8; }
 </style>
 </head>
-
 <body>
-
 <div class="header">
   <button class="back-btn" type="button" onclick="handleBack()">← Back</button>
   <h2>Match Game</h2>
@@ -481,14 +434,12 @@ button {
     <div class="tag">Memory · Matching</div>
     <p class="desc">Compare both sides and decide if they MATCH or NOT.</p>
   </div>
-
   <div class="how-card">
     <h2>How to Play</h2>
     <div class="step"><div class="num">1</div><div>Observe both sides carefully</div></div>
     <div class="step"><div class="num">2</div><div>Compare shapes, colors, and patterns</div></div>
-    <div class="step"><div class="num">3</div><div>Tap MATCH or NO MATCH</div></div>
+    <div class="step"><div class="num">3</div><div>Tap MATCH or NO MATCH  (or use ← → arrow keys)</div></div>
   </div>
-
   <button class="start-btn" type="button" onclick="startGame()">▶ Start Game</button>
 </div>
 
@@ -499,49 +450,46 @@ button {
     <div>Level<br><span id="level">1</span></div>
     <div>Round<br><span id="round">1</span>/30</div>
   </div>
-
   <div class="rule" id="rule">Level 1: Are the shapes the same or different?</div>
-
   <div class="panels">
     <div class="panel" id="leftPanel"></div>
     <div class="panel" id="rightPanel"></div>
   </div>
-
   <div class="buttons">
-    <button class="match" type="button" onclick="answer(true)">MATCH</button>
-    <button class="nomatch" type="button" onclick="answer(false)">NO MATCH</button>
+    <button class="match"   type="button" onclick="answer(true)">← MATCH</button>
+    <button class="nomatch" type="button" onclick="answer(false)">NO MATCH →</button>
   </div>
-
   <div id="message"></div>
 </div>
 
+<!-- FIX: Added ← Back to Menu button so players can exit after game over -->
 <div id="gameOver">
   <h1>Game Over 🎮</h1>
   <h2>Final Score: <span id="finalScore">0</span></h2>
-  <button class="restart" type="button" onclick="restartGame()">Restart</button>
+  <button class="restart"        type="button" onclick="restartGame()">Restart</button>
+  <button class="back-to-menu-btn" type="button" onclick="handleBack()">← Back to Menu</button>
 </div>
 
 <script>
-const menuScreen = document.getElementById("menuScreen");
-const gameScreen = document.getElementById("gameScreen");
-const gameOverScreen = document.getElementById("gameOver");
+const menuScreen    = document.getElementById("menuScreen");
+const gameScreen    = document.getElementById("gameScreen");
+const gameOverScreen= document.getElementById("gameOver");
+const leftPanel     = document.getElementById("leftPanel");
+const rightPanel    = document.getElementById("rightPanel");
+const scoreEl       = document.getElementById("score");
+const highEl        = document.getElementById("high");
+const levelEl       = document.getElementById("level");
+const roundEl       = document.getElementById("round");
+const ruleEl        = document.getElementById("rule");
+const messageEl     = document.getElementById("message");
+const finalScoreEl  = document.getElementById("finalScore");
 
-const leftPanel = document.getElementById("leftPanel");
-const rightPanel = document.getElementById("rightPanel");
-const scoreEl = document.getElementById("score");
-const highEl = document.getElementById("high");
-const levelEl = document.getElementById("level");
-const roundEl = document.getElementById("round");
-const ruleEl = document.getElementById("rule");
-const messageEl = document.getElementById("message");
-const finalScoreEl = document.getElementById("finalScore");
-
-let score = 0;
-let level = 1;
-let round = 1;
+let score     = 0;
+let level     = 1;
+let round     = 1;
 let maxRounds = 30;
-let isMatch = false;
-let audioCtx = null;
+let isMatch   = false;
+let audioCtx  = null;
 let highScore = Number(localStorage.getItem("match-high")) || 0;
 
 const shapes = ["circle", "triangle", "square"];
@@ -551,53 +499,38 @@ highEl.innerText = highScore;
 
 function handleBack() {
   if (gameScreen.style.display === "flex" || gameOverScreen.style.display === "flex") {
-    gameScreen.style.display = "none";
-    gameOverScreen.style.display = "none";
-    menuScreen.style.display = "flex";
-    document.body.style.overflow = "auto";
+    gameScreen.style.display    = "none";
+    gameOverScreen.style.display= "none";
+    menuScreen.style.display    = "flex";
+    document.body.style.overflow= "auto";
     return;
   }
-
   window.location.href = "index.html";
 }
 
 function soundAllowed() {
-  if (typeof isSoundOn === "function") {
-    return isSoundOn();
-  }
+  if (typeof isSoundOn === "function") return isSoundOn();
   return localStorage.getItem("ctg-sound") !== "off";
 }
 
 function unlockAudio() {
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   if (!AudioContext) return;
-
-  if (!audioCtx) {
-    audioCtx = new AudioContext();
-  }
-
-  if (audioCtx.state === "suspended") {
-    audioCtx.resume().catch(() => {});
-  }
+  if (!audioCtx) audioCtx = new AudioContext();
+  if (audioCtx.state === "suspended") audioCtx.resume().catch(() => {});
 }
 
 function beep(type) {
   if (!soundAllowed()) return;
-
   unlockAudio();
   if (!audioCtx) return;
-
-  const osc = audioCtx.createOscillator();
+  const osc  = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
-
   osc.connect(gain);
   gain.connect(audioCtx.destination);
-
   osc.frequency.value = type === "good" ? 700 : 180;
-
   gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
-
   osc.start();
   osc.stop(audioCtx.currentTime + 0.18);
 }
@@ -605,22 +538,17 @@ function beep(type) {
 function startGame() {
   window.scrollTo(0, 0);
   unlockAudio();
-
-  document.body.style.overflow = "hidden";
-
-  menuScreen.style.display = "none";
-  gameScreen.style.display = "flex";
-  gameOverScreen.style.display = "none";
-
-  score = 0;
-  level = 1;
-  round = 1;
-
-  scoreEl.innerText = score;
-  levelEl.innerText = level;
-  roundEl.innerText = round;
+  document.body.style.overflow    = "hidden";
+  menuScreen.style.display        = "none";
+  gameScreen.style.display        = "flex";
+  gameOverScreen.style.display    = "none";
+  score  = 0;
+  level  = 1;
+  round  = 1;
+  scoreEl.innerText   = score;
+  levelEl.innerText   = level;
+  roundEl.innerText   = round;
   messageEl.innerText = "";
-
   newRound();
 }
 
@@ -631,25 +559,17 @@ function restartGame() {
 function randomFrom(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
-
-function randomShape() {
-  return randomFrom(shapes);
-}
-
-function randomColor() {
-  return randomFrom(colors);
-}
+function randomShape() { return randomFrom(shapes); }
+function randomColor() { return randomFrom(colors); }
 
 function updateLevel() {
-  if (round <= 5) level = 1;
+  if      (round <= 5)  level = 1;
   else if (round <= 10) level = 2;
   else if (round <= 15) level = 3;
   else if (round <= 20) level = 4;
   else if (round <= 25) level = 5;
-  else level = 6;
-
+  else                  level = 6;
   levelEl.innerText = level;
-
   const rules = {
     1: "Level 1: Are the shapes the same or different?",
     2: "Level 2: Are the colors of both shapes the same or different?",
@@ -658,60 +578,30 @@ function updateLevel() {
     5: "Level 5: Compare the 2×2 patterns carefully.",
     6: "Level 6: Compare both patterns carefully and find any small differences."
   };
-
   ruleEl.innerText = rules[level];
 }
 
 function makeShape(shape, color) {
   const d = document.createElement("div");
-
-  if (shape === "circle") {
-    d.className = "circle";
-    d.style.backgroundColor = color;
-  }
-
-  if (shape === "square") {
-    d.className = "square";
-    d.style.backgroundColor = color;
-  }
-
-  if (shape === "triangle") {
-    d.className = "triangle";
-    d.style.borderBottomColor = color;
-  }
-
+  if (shape === "circle")   { d.className = "circle";   d.style.backgroundColor = color; }
+  if (shape === "square")   { d.className = "square";   d.style.backgroundColor = color; }
+  if (shape === "triangle") { d.className = "triangle"; d.style.borderBottomColor = color; }
   return d;
 }
 
 function makeMiniShape(shape, color) {
   const d = document.createElement("div");
-
-  if (shape === "circle") {
-    d.className = "mini-circle";
-    d.style.backgroundColor = color;
-  }
-
-  if (shape === "square") {
-    d.className = "mini-square";
-    d.style.backgroundColor = color;
-  }
-
-  if (shape === "triangle") {
-    d.className = "mini-triangle";
-    d.style.borderBottomColor = color;
-  }
-
+  if (shape === "circle")   { d.className = "mini-circle";   d.style.backgroundColor = color; }
+  if (shape === "square")   { d.className = "mini-square";   d.style.backgroundColor = color; }
+  if (shape === "triangle") { d.className = "mini-triangle"; d.style.borderBottomColor = color; }
   return d;
 }
 
 function newRound() {
-  leftPanel.innerHTML = "";
+  leftPanel.innerHTML  = "";
   rightPanel.innerHTML = "";
-
   updateLevel();
-
   isMatch = Math.random() > 0.5;
-
   if (level <= 3) {
     createSingleShapeRound();
   } else {
@@ -720,94 +610,64 @@ function newRound() {
 }
 
 function createSingleShapeRound() {
-  let leftShape = randomShape();
-  let leftColor = randomColor();
-
+  let leftShape  = randomShape();
+  let leftColor  = randomColor();
   let rightShape = leftShape;
   let rightColor = leftColor;
-
   if (!isMatch) {
     if (level === 1) {
-      do {
-        rightShape = randomShape();
-      } while (rightShape === leftShape);
+      do { rightShape = randomShape(); } while (rightShape === leftShape);
       rightColor = randomColor();
     } else if (level === 2) {
       rightShape = leftShape;
-      do {
-        rightColor = randomColor();
-      } while (rightColor === leftColor);
+      do { rightColor = randomColor(); } while (rightColor === leftColor);
     } else {
       if (Math.random() > 0.5) {
-        do {
-          rightShape = randomShape();
-        } while (rightShape === leftShape);
+        do { rightShape = randomShape(); } while (rightShape === leftShape);
       } else {
-        do {
-          rightColor = randomColor();
-        } while (rightColor === leftColor);
+        do { rightColor = randomColor(); } while (rightColor === leftColor);
       }
     }
   }
-
   leftPanel.appendChild(makeShape(leftShape, leftColor));
   rightPanel.appendChild(makeShape(rightShape, rightColor));
 }
 
 function createPatternRound() {
-  const leftPattern = [];
+  const leftPattern  = [];
   const rightPattern = [];
   const count = level === 4 ? 2 : 4;
-
   for (let i = 0; i < count; i++) {
-    const item = {
-      shape: randomShape(),
-      color: randomColor()
-    };
-
+    const item = { shape: randomShape(), color: randomColor() };
     leftPattern.push(item);
-    rightPattern.push({
-      shape: item.shape,
-      color: item.color
-    });
+    rightPattern.push({ shape: item.shape, color: item.color });
   }
-
   if (!isMatch) {
     const index = Math.floor(Math.random() * count);
-
     if (level === 4) {
-      do {
-        rightPattern[index].shape = randomShape();
-      } while (rightPattern[index].shape === leftPattern[index].shape);
+      do { rightPattern[index].shape = randomShape(); }
+      while (rightPattern[index].shape === leftPattern[index].shape);
     } else if (level === 5) {
       if (Math.random() > 0.5) {
-        do {
-          rightPattern[index].shape = randomShape();
-        } while (rightPattern[index].shape === leftPattern[index].shape);
+        do { rightPattern[index].shape = randomShape(); }
+        while (rightPattern[index].shape === leftPattern[index].shape);
       } else {
-        do {
-          rightPattern[index].color = randomColor();
-        } while (rightPattern[index].color === leftPattern[index].color);
+        do { rightPattern[index].color = randomColor(); }
+        while (rightPattern[index].color === leftPattern[index].color);
       }
     } else {
-      do {
-        rightPattern[index].color = randomColor();
-      } while (rightPattern[index].color === leftPattern[index].color);
+      do { rightPattern[index].color = randomColor(); }
+      while (rightPattern[index].color === leftPattern[index].color);
     }
   }
-
-  drawPattern(leftPanel, leftPattern, count);
+  drawPattern(leftPanel,  leftPattern,  count);
   drawPattern(rightPanel, rightPattern, count);
 }
 
 function drawPattern(panel, pattern, count) {
   const box = document.createElement("div");
   box.className = count === 2 ? "pattern-row" : "pattern-grid";
-
-  pattern.forEach(item => {
-    box.appendChild(makeMiniShape(item.shape, item.color));
-  });
-
+  pattern.forEach(item => box.appendChild(makeMiniShape(item.shape, item.color)));
   panel.appendChild(box);
 }
 
@@ -815,58 +675,63 @@ function answer(userAnswer) {
   if (userAnswer === isMatch) {
     score += 2;
     messageEl.style.color = "green";
-    messageEl.innerText = "Correct ✅";
+    messageEl.innerText   = "Correct ✅";
     beep("good");
   } else {
     messageEl.style.color = "red";
-    messageEl.innerText = "Wrong ❌";
+    messageEl.innerText   = "Wrong ❌";
     beep("bad");
   }
-
   if (score > highScore) {
     highScore = score;
     localStorage.setItem("match-high", highScore);
     highEl.innerText = highScore;
   }
-
   scoreEl.innerText = score;
-
   if (round >= maxRounds) {
-    setTimeout(gameOver, 450);
+    setTimeout(showGameOver, 450);
     return;
   }
-
   round++;
   roundEl.innerText = round;
-
   setTimeout(() => {
     messageEl.innerText = "";
     newRound();
   }, 450);
 }
 
-function gameOver() {
-  document.body.style.overflow = "hidden";
-
-  gameScreen.style.display = "none";
-  gameOverScreen.style.display = "flex";
-
-  finalScoreEl.innerText = score;
+// FIX: renamed inner function to showGameOver to avoid shadowing the
+//      gameOverScreen variable and to make the intent clearer.
+function showGameOver() {
+  document.body.style.overflow    = "hidden";
+  gameScreen.style.display        = "none";
+  gameOverScreen.style.display    = "flex";
+  finalScoreEl.innerText          = score;
 }
-  // APPLY DARK MODE FROM SETTINGS
+
 function applyTheme() {
   const theme = localStorage.getItem("ctg-theme");
-
   if (theme === "dark") {
     document.documentElement.setAttribute("data-theme", "dark");
   } else {
     document.documentElement.removeAttribute("data-theme");
   }
 }
-
-// RUN WHEN PAGE LOADS
 applyTheme();
-</script>
 
+// FIX: Added keyboard handler — no arrow-key support existed before.
+//      ← ArrowLeft  = MATCH
+//      → ArrowRight = NO MATCH
+window.addEventListener("keydown", function(e) {
+  if (gameScreen.style.display !== "flex") return;
+  if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    answer(true);   // MATCH
+  } else if (e.key === "ArrowRight") {
+    e.preventDefault();
+    answer(false);  // NO MATCH
+  }
+});
+</script>
 </body>
 </html>
