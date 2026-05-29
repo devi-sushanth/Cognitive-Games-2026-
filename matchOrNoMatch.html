@@ -5,417 +5,203 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Match Game</title>
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+/* FIX: prevent all scrollbars during game */
+html, body { height: 100%; }
 body {
   font-family: Arial, sans-serif;
   background: #f5f6fa;
   overflow-x: hidden;
 }
-button {
-  pointer-events: auto;
-  cursor: pointer;
-}
+/* FIX: kill page-level scroll when game/gameover is active */
+body.no-scroll { overflow: hidden; }
+button { pointer-events: auto; cursor: pointer; }
 .header {
-  width: 100%;
-  height: 60px;
-  background: #fff;
+  width: 100%; height: 60px; background: #fff;
   border-bottom: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  position: fixed; top: 0; left: 0; z-index: 1000;
 }
-.header h2 {
-  font-size: 20px;
-}
+.header h2 { font-size: 20px; }
 .back-btn {
-  position: absolute;
-  left: 15px;
-  background: none;
-  border: none;
-  font-size: 18px;
-  color: #6c5ce7;
-  font-weight: bold;
+  position: absolute; left: 15px;
+  background: none; border: none;
+  font-size: 18px; color: #6c5ce7; font-weight: bold;
 }
 #menuScreen {
-  width: 100%;
-  min-height: 100vh;
-  padding-top: 90px;
-  padding-bottom: 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
+  width: 100%; min-height: 100vh;
+  padding-top: 90px; padding-bottom: 40px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 20px;
 }
-.menu-card,
-.how-card {
-  width: 90%;
-  max-width: 420px;
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+.menu-card, .how-card {
+  width: 90%; max-width: 420px; background: #fff;
+  border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
-.menu-card {
-  padding: 30px 20px;
-  text-align: center;
-}
+.menu-card { padding: 30px 20px; text-align: center; }
 .icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: linear-gradient(135deg,#6c5ce7,#4834d4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: auto;
-  font-size: 36px;
-  color: white;
+  width: 80px; height: 80px; border-radius: 50%;
+  background: linear-gradient(135deg, #6c5ce7, #4834d4);
+  display: flex; align-items: center; justify-content: center;
+  margin: auto; font-size: 36px; color: white;
 }
-.menu-card h1 {
-  margin-top: 15px;
-  font-size: 34px;
-}
+.menu-card h1 { margin-top: 15px; font-size: 34px; }
 .tag {
-  display: inline-block;
-  margin-top: 10px;
-  background: #eee9ff;
-  color: #6c5ce7;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 13px;
+  display: inline-block; margin-top: 10px;
+  background: #eee9ff; color: #6c5ce7;
+  padding: 6px 14px; border-radius: 20px; font-size: 13px;
 }
-.desc {
-  margin-top: 15px;
-  color: #666;
-  font-size: 15px;
-}
-.how-card {
-  padding: 25px;
-}
-.how-card h2 {
-  margin-bottom: 15px;
-}
-.step {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 12px 0;
-}
+.desc { margin-top: 15px; color: #666; font-size: 15px; }
+.how-card { padding: 25px; }
+.how-card h2 { margin-bottom: 15px; }
+.step { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
 .num {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+  width: 34px; height: 34px; border-radius: 10px;
   background: #f1ede7;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
+  display: flex; align-items: center; justify-content: center; font-weight: bold;
 }
 .start-btn {
-  width: 90%;
-  max-width: 420px;
-  height: 60px;
-  border: none;
-  border-radius: 16px;
-  background: linear-gradient(135deg,#6c5ce7,#4834d4);
-  color: white;
-  font-size: 22px;
-  font-weight: bold;
+  width: 90%; max-width: 420px; height: 60px;
+  border: none; border-radius: 16px;
+  background: linear-gradient(135deg, #6c5ce7, #4834d4);
+  color: white; font-size: 22px; font-weight: bold;
 }
+/* FIX: game screen — no internal scroll, fits viewport */
 #gameScreen {
   display: none;
-  width: 100%;
-  min-height: 100vh;
-  padding-top: 70px;
-  padding-bottom: 20px;
-  flex-direction: column;
-  align-items: center;
+  width: 100%; height: 100vh;
+  padding-top: 70px; padding-bottom: 20px;
+  flex-direction: column; align-items: center;
   text-align: center;
-  overflow-y: auto;
+  overflow: hidden; /* FIX: was overflow-y: auto — caused scroll bar */
 }
 .top-bar {
-  width: 95%;
-  max-width: 560px;
-  display: flex;
-  justify-content: space-between;
+  width: 95%; max-width: 560px;
+  display: flex; justify-content: space-between;
   margin: 0 auto 18px auto;
-  font-weight: bold;
-  font-size: 14px;
+  font-weight: bold; font-size: 14px;
 }
 .rule {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 24px;
-  padding: 0 16px;
-  max-width: 560px;
-  line-height: 1.3;
+  font-size: 22px; font-weight: bold;
+  margin-bottom: 24px; padding: 0 16px;
+  max-width: 560px; line-height: 1.3;
 }
 .panels {
-  width: 100%;
-  max-width: 560px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 60px;
-  margin: 30px auto 40px auto;
+  width: 100%; max-width: 560px;
+  display: flex; justify-content: center; align-items: center;
+  gap: 60px; margin: 30px auto 40px auto;
 }
 .panel {
-  width: 170px;
-  height: 170px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+  width: 170px; height: 170px;
+  display: flex; align-items: center; justify-content: center; position: relative;
 }
-.panel > * {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-.circle {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-}
-.square {
-  width: 90px;
-  height: 90px;
-  border-radius: 10px;
-}
+.panel > * { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.circle { width: 90px; height: 90px; border-radius: 50%; }
+.square { width: 90px; height: 90px; border-radius: 10px; }
 .triangle {
-  width: 0;
-  height: 0;
+  width: 0; height: 0;
   border-left: 45px solid transparent;
   border-right: 45px solid transparent;
   border-bottom: 90px solid;
 }
-.pattern-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 28px;
-}
+.pattern-row { display: flex; align-items: center; justify-content: center; gap: 28px; }
 .pattern-grid {
-  width: 120px;
-  height: 120px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  place-items: center;
-  gap: 12px;
+  width: 120px; height: 120px;
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  place-items: center; gap: 12px;
 }
-.mini-circle {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-}
-.mini-square {
-  width: 34px;
-  height: 34px;
-  border-radius: 6px;
-}
+.mini-circle { width: 34px; height: 34px; border-radius: 50%; }
+.mini-square { width: 34px; height: 34px; border-radius: 6px; }
 .mini-triangle {
-  width: 0;
-  height: 0;
+  width: 0; height: 0;
   border-left: 18px solid transparent;
   border-right: 18px solid transparent;
   border-bottom: 34px solid;
 }
 .buttons {
-  width: 100%;
-  max-width: 420px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  margin: 0 auto;
+  width: 100%; max-width: 420px;
+  display: flex; justify-content: center; align-items: center;
+  gap: 16px; margin: 0 auto;
 }
 .buttons button {
-  width: 170px;
-  height: 56px;
-  border: none;
-  border-radius: 14px;
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
+  width: 170px; height: 56px; border: none;
+  border-radius: 14px; color: white;
+  font-size: 18px; font-weight: bold;
 }
-.match {
-  background: #e57373;
-}
-.nomatch {
-  background: #4fc3f7;
-}
-#message {
-  margin-top: 18px;
-  font-size: 24px;
-  font-weight: bold;
-  min-height: 30px;
-}
+.match   { background: #e57373; }
+.nomatch { background: #4fc3f7; }
+#message { margin-top: 18px; font-size: 24px; font-weight: bold; min-height: 30px; }
 
-/* ── Game-over screen ─────────────────────────────────────── */
+/* Game-over screen */
 #gameOver {
-  display: none;
-  width: 100%;
-  min-height: 100vh;
-  padding-top: 60px;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 0;
+  display: none; width: 100%; height: 100vh;
+  padding-top: 60px; text-align: center;
+  align-items: center; justify-content: center;
+  flex-direction: column; gap: 0;
+  overflow: hidden; /* FIX: no scroll here either */
 }
-#gameOver h1 {
-  font-size: 40px;
-}
-#gameOver h2 {
-  margin-top: 15px;
-  color: #6c5ce7;
-}
+#gameOver h1 { font-size: 40px; }
+#gameOver h2 { margin-top: 15px; color: #6c5ce7; }
 .restart {
-  margin-top: 25px;
-  width: 220px;
-  height: 55px;
-  border: none;
-  border-radius: 14px;
-  background: linear-gradient(135deg,#6c5ce7,#4834d4);
-  color: white;
-  font-size: 20px;
-  font-weight: bold;
+  margin-top: 25px; width: 220px; height: 55px;
+  border: none; border-radius: 14px;
+  background: linear-gradient(135deg, #6c5ce7, #4834d4);
+  color: white; font-size: 20px; font-weight: bold;
 }
-/* FIX: style for the new Back to Menu button on the game-over screen */
 .back-to-menu-btn {
-  margin-top: 14px;
-  width: 220px;
-  height: 55px;
-  border: none;
-  border-radius: 14px;
-  background: #636e72;
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
+  margin-top: 14px; width: 220px; height: 55px;
+  border: none; border-radius: 14px;
+  background: #636e72; color: white;
+  font-size: 18px; font-weight: bold; cursor: pointer;
 }
 
 @media(max-width:500px) {
-  .top-bar {
-    font-size: 12px;
-  }
-  .rule {
-    font-size: 18px;
-  }
-  .panels {
-    gap: 36px;
-  }
-  .panel {
-    width: 130px;
-    height: 130px;
-  }
-  .circle,
-  .square {
-    width: 75px;
-    height: 75px;
-  }
+  .top-bar { font-size: 12px; }
+  .rule { font-size: 18px; }
+  .panels { gap: 36px; }
+  .panel { width: 130px; height: 130px; }
+  .circle, .square { width: 75px; height: 75px; }
   .triangle {
     border-left: 38px solid transparent;
     border-right: 38px solid transparent;
     border-bottom: 76px solid;
   }
-  .buttons {
-    width: 90%;
-    max-width: 380px;
-    gap: 14px;
-  }
-  .buttons button {
-    flex: 1;
-    width: auto;
-    height: 52px;
-    font-size: 15px;
-  }
+  .buttons { width: 90%; max-width: 380px; gap: 14px; }
+  .buttons button { flex: 1; width: auto; height: 52px; font-size: 15px; }
 }
 @media (orientation: landscape) and (max-height: 500px) {
-  #gameScreen {
-    justify-content: flex-start;
-    padding-top: 70px;
-    padding-bottom: 20px;
-    overflow-y: auto;
-  }
-  .top-bar {
-    width: 92%;
-    font-size: 12px;
-    margin-bottom: 8px;
-  }
-  .rule {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-  .panels {
-    gap: 40px;
-    margin-top: 10px;
-    margin-bottom: 18px;
-  }
-  .panel {
-    width: 100px;
-    height: 100px;
-  }
-  .circle,
-  .square {
-    width: 62px;
-    height: 62px;
-  }
+  #gameScreen { justify-content: flex-start; padding-top: 70px; padding-bottom: 20px; }
+  .top-bar { width: 92%; font-size: 12px; margin-bottom: 8px; }
+  .rule { font-size: 18px; margin-bottom: 10px; }
+  .panels { gap: 40px; margin-top: 10px; margin-bottom: 18px; }
+  .panel { width: 100px; height: 100px; }
+  .circle, .square { width: 62px; height: 62px; }
   .triangle {
     border-left: 31px solid transparent;
     border-right: 31px solid transparent;
     border-bottom: 62px solid;
   }
-  .pattern-grid {
-    width: 85px;
-    height: 85px;
-    gap: 6px;
-  }
-  .mini-circle,
-  .mini-square {
-    width: 24px;
-    height: 24px;
-  }
+  .pattern-grid { width: 85px; height: 85px; gap: 6px; }
+  .mini-circle, .mini-square { width: 24px; height: 24px; }
   .mini-triangle {
     border-left: 12px solid transparent;
     border-right: 12px solid transparent;
     border-bottom: 24px solid;
   }
-  .buttons {
-    max-width: 340px;
-    gap: 10px;
-  }
-  .buttons button {
-    height: 42px;
-    font-size: 13px;
-  }
-  #message {
-    margin-top: 8px;
-    font-size: 16px;
-  }
+  .buttons { max-width: 340px; gap: 10px; }
+  .buttons button { height: 42px; font-size: 13px; }
+  #message { margin-top: 8px; font-size: 16px; }
 }
-/* ── Dark mode ─────────────────────────────────────────────── */
-[data-theme="dark"]  body        { background: #141414; color: #f0ede8; }
+
+/* Dark mode */
+[data-theme="dark"] body        { background: #141414; color: #f0ede8; }
 [data-theme="dark"] .header      { background: #1f1f1f; border-bottom-color: #333; color: #f0ede8; }
 [data-theme="dark"] .back-btn    { color: #a89cf7; }
 [data-theme="dark"] .back-btn:hover { background: rgba(168,156,247,0.15); }
 [data-theme="dark"] .menu-card,
 [data-theme="dark"] .how-card    { background: #1f1f1f; box-shadow: 0 6px 25px rgba(0,0,0,0.4); color: #f0ede8; }
-[data-theme="dark"] .menu-card h2,
-[data-theme="dark"] .how-card h3 { color: #f0ede8; }
 [data-theme="dark"] .desc        { color: #9a9590; }
-[data-theme="dark"] .domain-tag  { background: rgba(108,92,231,0.2); color: #a89cf7; }
 [data-theme="dark"] .num         { background: #2a2a2a; color: #f0ede8; }
-[data-theme="dark"] #rule        { color: #9a9590; }
 [data-theme="dark"] .top-bar,
 [data-theme="dark"] #message,
 [data-theme="dark"] #gameOver    { color: #f0ede8; }
@@ -438,7 +224,7 @@ button {
     <h2>How to Play</h2>
     <div class="step"><div class="num">1</div><div>Observe both sides carefully</div></div>
     <div class="step"><div class="num">2</div><div>Compare shapes, colors, and patterns</div></div>
-    <div class="step"><div class="num">3</div><div>Tap MATCH or NO MATCH  (or use ← → arrow keys)</div></div>
+    <div class="step"><div class="num">3</div><div>Tap MATCH or NO MATCH (or use ← → arrow keys)</div></div>
   </div>
   <button class="start-btn" type="button" onclick="startGame()">▶ Start Game</button>
 </div>
@@ -462,32 +248,35 @@ button {
   <div id="message"></div>
 </div>
 
-<!-- FIX: Added ← Back to Menu button so players can exit after game over -->
 <div id="gameOver">
   <h1>Game Over 🎮</h1>
   <h2>Final Score: <span id="finalScore">0</span></h2>
-  <button class="restart"        type="button" onclick="restartGame()">Restart</button>
-  <button class="back-to-menu-btn" type="button" onclick="handleBack()">← Back to Menu</button>
+  <button class="restart"         type="button" onclick="restartGame()">Restart</button>
+  <button class="back-to-menu-btn" type="button" onclick="goToMenu()">← Back to Menu</button>
 </div>
 
 <script>
-const menuScreen    = document.getElementById("menuScreen");
-const gameScreen    = document.getElementById("gameScreen");
-const gameOverScreen= document.getElementById("gameOver");
-const leftPanel     = document.getElementById("leftPanel");
-const rightPanel    = document.getElementById("rightPanel");
-const scoreEl       = document.getElementById("score");
-const highEl        = document.getElementById("high");
-const levelEl       = document.getElementById("level");
-const roundEl       = document.getElementById("round");
-const ruleEl        = document.getElementById("rule");
-const messageEl     = document.getElementById("message");
-const finalScoreEl  = document.getElementById("finalScore");
+const menuScreen     = document.getElementById("menuScreen");
+const gameScreen     = document.getElementById("gameScreen");
+const gameOverScreen = document.getElementById("gameOver");
+const leftPanel      = document.getElementById("leftPanel");
+const rightPanel     = document.getElementById("rightPanel");
+const scoreEl        = document.getElementById("score");
+const highEl         = document.getElementById("high");
+const levelEl        = document.getElementById("level");
+const roundEl        = document.getElementById("round");
+const ruleEl         = document.getElementById("rule");
+const messageEl      = document.getElementById("message");
+const finalScoreEl   = document.getElementById("finalScore");
+
+/* FIX: track which screen is active via a variable instead of reading
+   inline style, which was unreliable for the initial CSS-driven state. */
+let currentScreen = "menu"; // "menu" | "game" | "gameover"
 
 let score     = 0;
 let level     = 1;
 let round     = 1;
-let maxRounds = 30;
+const maxRounds = 30;
 let isMatch   = false;
 let audioCtx  = null;
 let highScore = Number(localStorage.getItem("match-high")) || 0;
@@ -497,29 +286,47 @@ const colors = ["#6c5ce7", "#00b894", "#e17055", "#fdcb6e"];
 
 highEl.innerText = highScore;
 
-function handleBack() {
-  if (gameScreen.style.display === "flex" || gameOverScreen.style.display === "flex") {
-    gameScreen.style.display    = "none";
-    gameOverScreen.style.display= "none";
-    menuScreen.style.display    = "flex";
-    document.body.style.overflow= "auto";
-    return;
+/* ── Screen helpers ─────────────────────────────────────────── */
+function showScreen(name) {
+  menuScreen.style.display     = "none";
+  gameScreen.style.display     = "none";
+  gameOverScreen.style.display = "none";
+
+  if (name === "menu") {
+    menuScreen.style.display = "flex";
+    document.body.classList.remove("no-scroll"); /* FIX: restore scroll on menu */
+  } else if (name === "game") {
+    gameScreen.style.display = "flex";
+    document.body.classList.add("no-scroll");    /* FIX: kill scrollbars during game */
+  } else if (name === "gameover") {
+    gameOverScreen.style.display = "flex";
+    document.body.classList.add("no-scroll");
   }
-  window.location.href = "index.html";
+  currentScreen = name;
 }
 
+/* FIX: handleBack now uses currentScreen so it never gets "stuck" */
+function handleBack() {
+  if (currentScreen === "game" || currentScreen === "gameover") {
+    showScreen("menu");
+  } else {
+    window.location.href = "index.html";
+  }
+}
+
+function goToMenu() { showScreen("menu"); }
+
+/* ── Audio ──────────────────────────────────────────────────── */
 function soundAllowed() {
   if (typeof isSoundOn === "function") return isSoundOn();
   return localStorage.getItem("ctg-sound") !== "off";
 }
-
 function unlockAudio() {
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
-  if (!AudioContext) return;
-  if (!audioCtx) audioCtx = new AudioContext();
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return;
+  if (!audioCtx) audioCtx = new AC();
   if (audioCtx.state === "suspended") audioCtx.resume().catch(() => {});
 }
-
 function beep(type) {
   if (!soundAllowed()) return;
   unlockAudio();
@@ -535,30 +342,22 @@ function beep(type) {
   osc.stop(audioCtx.currentTime + 0.18);
 }
 
+/* ── Game logic ─────────────────────────────────────────────── */
 function startGame() {
   window.scrollTo(0, 0);
   unlockAudio();
-  document.body.style.overflow    = "hidden";
-  menuScreen.style.display        = "none";
-  gameScreen.style.display        = "flex";
-  gameOverScreen.style.display    = "none";
-  score  = 0;
-  level  = 1;
-  round  = 1;
-  scoreEl.innerText   = score;
-  levelEl.innerText   = level;
-  roundEl.innerText   = round;
+  score = 0; level = 1; round = 1;
+  scoreEl.innerText = score;
+  levelEl.innerText = level;
+  roundEl.innerText = round;
   messageEl.innerText = "";
+  showScreen("game");
   newRound();
 }
 
-function restartGame() {
-  startGame();
-}
+function restartGame() { startGame(); }
 
-function randomFrom(array) {
-  return array[Math.floor(Math.random() * array.length)];
-}
+function randomFrom(a) { return a[Math.floor(Math.random() * a.length)]; }
 function randomShape() { return randomFrom(shapes); }
 function randomColor() { return randomFrom(colors); }
 
@@ -588,7 +387,6 @@ function makeShape(shape, color) {
   if (shape === "triangle") { d.className = "triangle"; d.style.borderBottomColor = color; }
   return d;
 }
-
 function makeMiniShape(shape, color) {
   const d = document.createElement("div");
   if (shape === "circle")   { d.className = "mini-circle";   d.style.backgroundColor = color; }
@@ -602,66 +400,49 @@ function newRound() {
   rightPanel.innerHTML = "";
   updateLevel();
   isMatch = Math.random() > 0.5;
-  if (level <= 3) {
-    createSingleShapeRound();
-  } else {
-    createPatternRound();
-  }
+  if (level <= 3) createSingleShapeRound();
+  else            createPatternRound();
 }
 
 function createSingleShapeRound() {
-  let leftShape  = randomShape();
-  let leftColor  = randomColor();
-  let rightShape = leftShape;
-  let rightColor = leftColor;
+  let ls = randomShape(), lc = randomColor();
+  let rs = ls, rc = lc;
   if (!isMatch) {
     if (level === 1) {
-      do { rightShape = randomShape(); } while (rightShape === leftShape);
-      rightColor = randomColor();
+      do { rs = randomShape(); } while (rs === ls);
+      rc = randomColor();
     } else if (level === 2) {
-      rightShape = leftShape;
-      do { rightColor = randomColor(); } while (rightColor === leftColor);
+      do { rc = randomColor(); } while (rc === lc);
     } else {
-      if (Math.random() > 0.5) {
-        do { rightShape = randomShape(); } while (rightShape === leftShape);
-      } else {
-        do { rightColor = randomColor(); } while (rightColor === leftColor);
-      }
+      if (Math.random() > 0.5) { do { rs = randomShape(); } while (rs === ls); }
+      else                     { do { rc = randomColor(); } while (rc === lc); }
     }
   }
-  leftPanel.appendChild(makeShape(leftShape, leftColor));
-  rightPanel.appendChild(makeShape(rightShape, rightColor));
+  leftPanel.appendChild(makeShape(ls, lc));
+  rightPanel.appendChild(makeShape(rs, rc));
 }
 
 function createPatternRound() {
-  const leftPattern  = [];
-  const rightPattern = [];
   const count = level === 4 ? 2 : 4;
+  const lp = [], rp = [];
   for (let i = 0; i < count; i++) {
     const item = { shape: randomShape(), color: randomColor() };
-    leftPattern.push(item);
-    rightPattern.push({ shape: item.shape, color: item.color });
+    lp.push(item);
+    rp.push({ shape: item.shape, color: item.color });
   }
   if (!isMatch) {
-    const index = Math.floor(Math.random() * count);
+    const idx = Math.floor(Math.random() * count);
     if (level === 4) {
-      do { rightPattern[index].shape = randomShape(); }
-      while (rightPattern[index].shape === leftPattern[index].shape);
+      do { rp[idx].shape = randomShape(); } while (rp[idx].shape === lp[idx].shape);
     } else if (level === 5) {
-      if (Math.random() > 0.5) {
-        do { rightPattern[index].shape = randomShape(); }
-        while (rightPattern[index].shape === leftPattern[index].shape);
-      } else {
-        do { rightPattern[index].color = randomColor(); }
-        while (rightPattern[index].color === leftPattern[index].color);
-      }
+      if (Math.random() > 0.5) { do { rp[idx].shape = randomShape(); } while (rp[idx].shape === lp[idx].shape); }
+      else                     { do { rp[idx].color = randomColor(); } while (rp[idx].color === lp[idx].color); }
     } else {
-      do { rightPattern[index].color = randomColor(); }
-      while (rightPattern[index].color === leftPattern[index].color);
+      do { rp[idx].color = randomColor(); } while (rp[idx].color === lp[idx].color);
     }
   }
-  drawPattern(leftPanel,  leftPattern,  count);
-  drawPattern(rightPanel, rightPattern, count);
+  drawPattern(leftPanel,  lp, count);
+  drawPattern(rightPanel, rp, count);
 }
 
 function drawPattern(panel, pattern, count) {
@@ -688,49 +469,30 @@ function answer(userAnswer) {
     highEl.innerText = highScore;
   }
   scoreEl.innerText = score;
-  if (round >= maxRounds) {
-    setTimeout(showGameOver, 450);
-    return;
-  }
+  if (round >= maxRounds) { setTimeout(showGameOver, 450); return; }
   round++;
   roundEl.innerText = round;
-  setTimeout(() => {
-    messageEl.innerText = "";
-    newRound();
-  }, 450);
+  setTimeout(() => { messageEl.innerText = ""; newRound(); }, 450);
 }
 
-// FIX: renamed inner function to showGameOver to avoid shadowing the
-//      gameOverScreen variable and to make the intent clearer.
 function showGameOver() {
-  document.body.style.overflow    = "hidden";
-  gameScreen.style.display        = "none";
-  gameOverScreen.style.display    = "flex";
-  finalScoreEl.innerText          = score;
+  finalScoreEl.innerText = score;
+  showScreen("gameover");
 }
 
+/* ── Theme ──────────────────────────────────────────────────── */
 function applyTheme() {
-  const theme = localStorage.getItem("ctg-theme");
-  if (theme === "dark") {
-    document.documentElement.setAttribute("data-theme", "dark");
-  } else {
-    document.documentElement.removeAttribute("data-theme");
-  }
+  const t = localStorage.getItem("ctg-theme");
+  if (t === "dark") document.documentElement.setAttribute("data-theme", "dark");
+  else              document.documentElement.removeAttribute("data-theme");
 }
 applyTheme();
 
-// FIX: Added keyboard handler — no arrow-key support existed before.
-//      ← ArrowLeft  = MATCH
-//      → ArrowRight = NO MATCH
+/* ── Keyboard ───────────────────────────────────────────────── */
 window.addEventListener("keydown", function(e) {
-  if (gameScreen.style.display !== "flex") return;
-  if (e.key === "ArrowLeft") {
-    e.preventDefault();
-    answer(true);   // MATCH
-  } else if (e.key === "ArrowRight") {
-    e.preventDefault();
-    answer(false);  // NO MATCH
-  }
+  if (currentScreen !== "game") return;
+  if (e.key === "ArrowLeft")  { e.preventDefault(); answer(true);  }
+  if (e.key === "ArrowRight") { e.preventDefault(); answer(false); }
 });
 </script>
 </body>
