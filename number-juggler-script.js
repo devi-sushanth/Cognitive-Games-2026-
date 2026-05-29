@@ -7,9 +7,33 @@ let level = 1;
 let roundsInLevel = 0;
 let totalIncorrect = 0;
 let correctAnswer = "";
-let timer;
-let timeLeft;
+let timer = null;
+let timeLeft = 0;
 let soundEnabled = true;
+let gameStarted = false;
+
+// ==========================
+// ELEMENTS
+// ==========================
+
+const startGameBtn = document.getElementById("startGameBtn");
+const introScreen = document.getElementById("introScreen");
+
+const backBtn = document.getElementById("backBtn");
+const introBackBtn = document.getElementById("introBackBtn");
+
+const leftBtn = document.getElementById("leftBtn");
+const rightBtn = document.getElementById("rightBtn");
+
+const soundBtn = document.getElementById("soundBtn");
+
+const instruction = document.getElementById("instruction");
+const mainDisplay = document.getElementById("mainDisplay");
+
+const scoreElement = document.getElementById("score");
+const levelElement = document.getElementById("level");
+const timerDisplay = document.getElementById("timerDisplay");
+
 
 // ==========================
 // SOUNDS
@@ -21,11 +45,16 @@ const soundReveal = new Audio("sounds/reveal.mp3");
 const soundWarning = new Audio("sounds/warning.mp3");
 const soundLevelUp = new Audio("sounds/levelup.mp3");
 
-soundCorrect.volume = 0.5;
-soundWrong.volume = 0.5;
-soundReveal.volume = 0.3;
-soundWarning.volume = 0.3;
-soundLevelUp.volume = 0.5;
+[
+    soundCorrect,
+    soundWrong,
+    soundReveal,
+    soundWarning,
+    soundLevelUp
+].forEach(sound => {
+    sound.volume = 0.5;
+});
+
 
 // ==========================
 // PLAY SOUND
@@ -38,22 +67,28 @@ function playSound(sound){
     sound.pause();
     sound.currentTime = 0;
 
-    sound.play().catch(()=>{
-        console.log("Sound blocked");
-    });
+    sound.play().catch(() => {});
 }
+
 
 // ==========================
 // START GAME BUTTON
 // ==========================
 
-document.getElementById("startGameBtn")
-.addEventListener("click", function(){
+if(startGameBtn){
 
-    document.getElementById("introScreen").style.display = "none";
+    startGameBtn.addEventListener("click", () => {
 
-    startGame();
-});
+        gameStarted = true;
+
+        if(introScreen){
+            introScreen.style.display = "none";
+        }
+
+        startGame();
+    });
+}
+
 
 // ==========================
 // START GAME
@@ -61,8 +96,16 @@ document.getElementById("startGameBtn")
 
 function startGame(){
 
+    score = 0;
+    level = 1;
+    roundsInLevel = 0;
+    totalIncorrect = 0;
+
+    updateLives();
+
     nextRound();
 }
+
 
 // ==========================
 // UPDATE LIVES
@@ -78,8 +121,14 @@ function updateLives(){
         hearts += "❤️ ";
     }
 
-    document.querySelector(".top-bar-lives").innerText = hearts;
+    const livesElement =
+    document.querySelector(".top-bar-lives");
+
+    if(livesElement){
+        livesElement.innerText = hearts;
+    }
 }
+
 
 // ==========================
 // NEXT ROUND
@@ -91,6 +140,8 @@ function nextRound(){
 
     roundsInLevel++;
 
+    // LEVEL COMPLETE
+
     if(roundsInLevel > 15){
 
         playSound(soundLevelUp);
@@ -101,6 +152,8 @@ function nextRound(){
         roundsInLevel = 1;
     }
 
+    // GAME OVER
+
     if(totalIncorrect >= 5){
 
         alert("Game Over! Final Score: " + score);
@@ -110,9 +163,15 @@ function nextRound(){
         return;
     }
 
-    document.getElementById("level").innerText = level;
+    // UPDATE UI
 
-    document.getElementById("score").innerText = score;
+    if(levelElement){
+        levelElement.innerText = level;
+    }
+
+    if(scoreElement){
+        scoreElement.innerText = score;
+    }
 
     updateLives();
 
@@ -122,38 +181,43 @@ function nextRound(){
 
     if(level >= 4){
 
-        document.getElementById("timerDisplay").style.display = "block";
+        if(timerDisplay){
+            timerDisplay.style.display = "block";
+        }
 
         if(level === 4){
+
             startTimer(10);
-        }
-        else if(level === 5){
+
+        } else if(level === 5){
+
             startTimer(8);
-        }
-        else{
+
+        } else {
+
             startTimer(6);
         }
 
     } else {
 
-        document.getElementById("timerDisplay").style.display = "none";
+        if(timerDisplay){
+            timerDisplay.style.display = "none";
+        }
     }
 
     // ==========================
-    // LEVEL SETTINGS
+    // LEVEL GAME MODES
     // ==========================
 
     if(level === 1){
 
         generateOddEven(20);
-    }
 
-    else if(level === 2){
+    } else if(level === 2){
 
         generateComparison(50);
-    }
 
-    else if(level === 3){
+    } else if(level === 3){
 
         if(Math.random() < 0.5){
 
@@ -163,9 +227,8 @@ function nextRound(){
 
             generateOddEven(50);
         }
-    }
 
-    else if(level === 4){
+    } else if(level === 4){
 
         let r = Math.random();
 
@@ -173,19 +236,16 @@ function nextRound(){
 
             generateOddEven(100);
 
-        }
-        else if(r < 0.66){
+        } else if(r < 0.66){
 
             generateComparison(200);
 
-        }
-        else{
+        } else {
 
             generateArithmetic(50);
         }
-    }
 
-    else{
+    } else {
 
         let r = Math.random();
 
@@ -193,18 +253,17 @@ function nextRound(){
 
             generateOddEven(999);
 
-        }
-        else if(r < 0.66){
+        } else if(r < 0.66){
 
             generateComparison(999);
 
-        }
-        else{
+        } else {
 
             generateArithmetic(100);
         }
     }
 }
+
 
 // ==========================
 // TIMER
@@ -212,17 +271,22 @@ function nextRound(){
 
 function startTimer(seconds){
 
+    clearInterval(timer);
+
     timeLeft = seconds;
 
-    let timerElement = document.getElementById("timerDisplay");
+    if(timerDisplay){
+        timerDisplay.innerText = "Time: " + timeLeft;
+    }
 
-    timerElement.innerText = "Time: " + timeLeft;
-
-    timer = setInterval(function(){
+    timer = setInterval(() => {
 
         timeLeft--;
 
-        timerElement.innerText = "Time: " + timeLeft;
+        if(timerDisplay){
+            timerDisplay.innerText =
+            "Time: " + timeLeft;
+        }
 
         if(timeLeft === 2){
             playSound(soundWarning);
@@ -239,14 +303,17 @@ function startTimer(seconds){
             nextRound();
         }
 
-    },1000);
+    }, 1000);
 }
+
 
 // ==========================
 // CHECK ANSWER
 // ==========================
 
 function checkAnswer(choice){
+
+    if(!gameStarted) return;
 
     clearInterval(timer);
 
@@ -266,8 +333,9 @@ function checkAnswer(choice){
     nextRound();
 }
 
+
 // ==========================
-// ODD EVEN MODE
+// ODD / EVEN MODE
 // ==========================
 
 function generateOddEven(range){
@@ -276,68 +344,67 @@ function generateOddEven(range){
 
     let num = Math.floor(Math.random() * range) + 1;
 
-    document.getElementById("instruction").innerText =
+    instruction.innerText =
     "Is the number Odd or Even?";
 
-    document.getElementById("mainDisplay").innerHTML = num;
+    mainDisplay.innerHTML = num;
 
-    document.getElementById("leftBtn").innerText = "ODD";
-    document.getElementById("rightBtn").innerText = "EVEN";
+    leftBtn.innerText = "ODD";
+    rightBtn.innerText = "EVEN";
 
-    if(num % 2 === 0){
-        correctAnswer = "RIGHT";
-    } else {
-        correctAnswer = "LEFT";
-    }
+    correctAnswer =
+    (num % 2 === 0) ? "RIGHT" : "LEFT";
 }
 
+
 // ==========================
-// GAME MODE: COMPARISON
+// COMPARISON MODE
 // ==========================
 
-function generateComparison(range) {
+function generateComparison(range){
 
     playSound(soundReveal);
 
-    let num1 = Math.floor(Math.random() * range) + 1;
-    let num2 = Math.floor(Math.random() * range) + 1;
+    let num1 =
+    Math.floor(Math.random() * range) + 1;
 
-    while (num1 === num2) {
-        num2 = Math.floor(Math.random() * range) + 1;
+    let num2 =
+    Math.floor(Math.random() * range) + 1;
+
+    while(num1 === num2){
+
+        num2 =
+        Math.floor(Math.random() * range) + 1;
     }
 
     let askBigger = Math.random() < 0.5;
 
-    if (askBigger) {
-        document.getElementById("instruction").innerText =
-            "Tap the BIGGER number side";
-    } else {
-        document.getElementById("instruction").innerText =
-            "Tap the SMALLER number side";
-    }
+    instruction.innerText = askBigger
+        ? "Tap the BIGGER number side"
+        : "Tap the SMALLER number side";
 
-    document.getElementById("mainDisplay").innerHTML = `
+    mainDisplay.innerHTML = `
         <div class="option-container">
             <div>${num1}</div>
             <div>${num2}</div>
         </div>
     `;
 
-    let leftBtn = document.getElementById("leftBtn");
-    let rightBtn = document.getElementById("rightBtn");
-
     leftBtn.innerText = "LEFT";
     rightBtn.innerText = "RIGHT";
 
-    leftBtn.className = "";
-    rightBtn.className = "";
+    if(askBigger){
 
-    if (askBigger) {
-        correctAnswer = (num1 > num2) ? "LEFT" : "RIGHT";
+        correctAnswer =
+        (num1 > num2) ? "LEFT" : "RIGHT";
+
     } else {
-        correctAnswer = (num1 < num2) ? "LEFT" : "RIGHT";
+
+        correctAnswer =
+        (num1 < num2) ? "LEFT" : "RIGHT";
     }
 }
+
 
 // ==========================
 // ARITHMETIC MODE
@@ -347,8 +414,11 @@ function generateArithmetic(range){
 
     playSound(soundReveal);
 
-    let num1 = Math.floor(Math.random() * range) + 1;
-    let num2 = Math.floor(Math.random() * range) + 1;
+    let num1 =
+    Math.floor(Math.random() * range) + 1;
+
+    let num2 =
+    Math.floor(Math.random() * range) + 1;
 
     let answer = num1 + num2;
 
@@ -372,12 +442,14 @@ function generateArithmetic(range){
         correctAnswer = "RIGHT";
     }
 
-    document.getElementById("instruction").innerText =
+    instruction.innerText =
     "What is the correct answer?";
 
-    document.getElementById("mainDisplay").innerHTML = `
+    mainDisplay.innerHTML = `
         <div class="arithmetic-container">
-            <div class="equation">${num1} + ${num2} = ?</div>
+            <div class="equation">
+                ${num1} + ${num2} = ?
+            </div>
 
             <div class="choices">
                 <div>${leftSide}</div>
@@ -386,95 +458,76 @@ function generateArithmetic(range){
         </div>
     `;
 
-    document.getElementById("leftBtn").innerText = "FIRST";
-    document.getElementById("rightBtn").innerText = "SECOND";
+    leftBtn.innerText = "FIRST";
+    rightBtn.innerText = "SECOND";
 }
 
-// ==========================
-// RANDOM MODE
-// ==========================
-
-function pickRandomType(range){
-
-    let r = Math.random();
-
-    if(r < 0.33){
-        generateOddEven(range);
-    }
-    else if(r < 0.66){
-        generateComparison(range);
-    }
-    else{
-        generateArithmetic(20);
-    }
-}
 
 // ==========================
 // BUTTON EVENTS
 // ==========================
 
-document.getElementById("leftBtn")
-.addEventListener("click", function(){
+if(leftBtn){
 
-    checkAnswer("LEFT");
+    leftBtn.addEventListener("click", () => {
 
-});
+        checkAnswer("LEFT");
+    });
+}
 
-document.getElementById("rightBtn")
-.addEventListener("click", function(){
+if(rightBtn){
 
-    checkAnswer("RIGHT");
+    rightBtn.addEventListener("click", () => {
 
-});
+        checkAnswer("RIGHT");
+    });
+}
+
 
 // ==========================
 // BACK BUTTON
 // ==========================
 
-document.getElementById("backBtn")
-.addEventListener("click", function(){
+function exitGame(){
 
-    let confirmExit = confirm("Exit the game?");
+    clearInterval(timer);
 
-    if(confirmExit){
-
-        window.location.href = "index.html";
-    }
-});
-
-// ==========================
-// INTRO BACK BUTTON
-// ==========================
-
-document.getElementById("introBackBtn")
-.addEventListener("click", function(){
-
-    let confirmExit = confirm("Exit the game?");
+    let confirmExit =
+    confirm("Exit the game?");
 
     if(confirmExit){
 
         window.location.href = "index.html";
     }
-});
+}
+
+if(backBtn){
+
+    backBtn.addEventListener("click", exitGame);
+}
+
+if(introBackBtn){
+
+    introBackBtn.addEventListener("click", exitGame);
+}
+
 
 // ==========================
 // SOUND TOGGLE
 // ==========================
 
-document.getElementById("soundBtn")
-.addEventListener("click", function(){
+if(soundBtn){
 
-    soundEnabled = !soundEnabled;
+    soundBtn.addEventListener("click", function(){
 
-    if(soundEnabled){
+        soundEnabled = !soundEnabled;
 
-        this.innerText = "🔊 Sound ON";
+        this.innerText = soundEnabled
+            ? "🔊 Sound ON"
+            : "🔇 Sound OFF";
+    });
+}
 
-    } else {
-
-        this.innerText = "🔇 Sound OFF";
-    }
-});
 
 // ==========================
 // KEYBOARD SUPPORT
@@ -482,11 +535,15 @@ document.getElementById("soundBtn")
 
 document.addEventListener("keydown", function(e){
 
+    if(!gameStarted) return;
+
     if(e.key === "ArrowLeft"){
+
         checkAnswer("LEFT");
     }
 
     if(e.key === "ArrowRight"){
+
         checkAnswer("RIGHT");
     }
 });
