@@ -10,10 +10,14 @@
   padding: 0;
   box-sizing: border-box;
 }
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
 body {
   font-family: Arial, sans-serif;
   background: #f8f6f3;
-  overflow-x: hidden;
 }
 .header {
   width: 100%;
@@ -40,8 +44,10 @@ body {
 }
 #menuScreen {
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
   padding-top: 70px;
+  padding-bottom: 20px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -108,6 +114,7 @@ body {
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  flex-shrink: 0;
 }
 .start-btn {
   width: 90%;
@@ -124,9 +131,10 @@ body {
 #gameScreen {
   display: none;
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
   padding-top: 65px;
   padding-bottom: 12px;
+  overflow: hidden;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
@@ -138,134 +146,76 @@ body {
   align-items: center;
   width: 100%;
   max-width: 620px;
-  margin: 0 auto 18px auto;
+  margin: 0 auto 8px auto;
   padding: 8px 10px;
-  background: transparent;
-  box-shadow: none;
-  border-radius: 0;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
 }
 .top-bar div {
   flex: 1;
   text-align: center;
 }
 .rule {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
-  margin-bottom: 22px;
+  margin-bottom: 10px;
 }
 canvas {
-  width: 75vw;
-  height: 75vw;
-  max-width: 420px;
-  max-height: 420px;
+  width: 280px;
+  height: 280px;
+  max-width: 280px;
+  max-height: 280px;
   display: block;
-  outline: none; /* hide focus ring on canvas */
+  outline: none;
+  flex-shrink: 0;
 }
 .buttons {
   display: flex;
   gap: 12px;
   width: 90%;
   max-width: 360px;
-  margin-top: 24px;
+  margin-top: 12px;
 }
 .buttons button {
   flex: 1;
-  height: 50px;
+  height: 42px;
   border: none;
   border-radius: 10px;
   color: white;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: bold;
   cursor: pointer;
 }
-.left {
-  background: #d96f6f;
-}
-.right {
-  background: #56aeea;
-}
-.restart {
-  background: #8f8f8f;
-}
+.left    { background: #d96f6f; }
+.right   { background: #56aeea; }
+.restart { background: #8f8f8f; }
 #result {
-  margin-top: 15px;
-  font-size: 22px;
+  margin-top: 8px;
+  font-size: 16px;
   font-weight: bold;
-  min-height: 30px;
+  min-height: 24px;
 }
 #finalScore {
-  margin-top: 8px;
-  font-size: 20px;
+  margin-top: 4px;
+  font-size: 15px;
   font-weight: bold;
 }
-@media(max-width: 600px) {
-  .top-bar {
-    font-size: 14px;
-  }
-  .rule {
-    font-size: 17px;
-  }
+@media (max-width: 600px) {
   canvas {
     width: 75vw;
     height: 75vw;
-  }
-  .buttons button {
-    font-size: 13px;
-  }
-}
-/* 💻 LAPTOP / DESKTOP FIX */
-  .top-bar {
-    margin-bottom: 8px;
-    font-size: 14px;
-  }
-  .rule {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-  canvas {
-    width: 280px;
-    height: 280px;
-    max-width: 280px;
-    max-height: 280px;
-  }
-  .buttons {
-    margin-top: 12px;
-  }
-  .buttons button {
-    height: 42px;
-    font-size: 13px;
-  }
-  #result {
-    font-size: 16px;
-    margin-top: 8px;
-  }
-  #finalScore {
-    font-size: 15px;
+    max-width: 75vw;
+    max-height: 75vw;
   }
 }
-/* LANDSCAPE MODE FIX */
 @media (orientation: landscape) and (max-height: 520px) {
-  body {
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-  .header {
-    height: 42px;
-  }
-  .back-btn {
-    font-size: 14px;
-  }
+  .header { height: 42px; }
+  .back-btn { font-size: 14px; }
   #gameScreen {
-    min-height: 100dvh;
     padding-top: 42px;
     padding-bottom: 6px;
-    justify-content: flex-start;
-    height: auto;
   }
   .top-bar {
-    max-width: 620px;
     font-size: 12px;
     margin-bottom: 4px;
     padding: 4px 8px;
@@ -315,7 +265,7 @@ canvas {
   color: #9a9590;
 }
 .header {
-  position: relative;
+  position: fixed;
   padding: 12px 16px;
   border-bottom: 1px solid #ddd;
 }
@@ -325,7 +275,7 @@ canvas {
   transform: translateX(-50%);
   font-size: 18px;
   font-weight: bold;
-  pointer-events:none;
+  pointer-events: none;
 }
 </style>
 </head>
@@ -359,7 +309,6 @@ canvas {
   <div class="rule" id="rule"></div>
   <canvas id="canvas" tabindex="0"></canvas>
   <div class="buttons">
-    <!-- FIX: onmouseup returns focus to canvas so arrow keys keep working after a click -->
     <button class="left"    onclick="check('L')" onmouseup="canvas.focus()">← LEFT</button>
     <button class="right"   onclick="check('R')" onmouseup="canvas.focus()">RIGHT →</button>
     <button class="restart" onclick="restart()">RESTART</button>
@@ -443,10 +392,12 @@ function resizeCanvas() {
   if (window.innerWidth > window.innerHeight) {
     size = Math.min(window.innerHeight * 0.38, 180);
   } else {
-    size = Math.min(window.innerWidth * 0.75, 420);
+    size = Math.min(window.innerWidth * 0.75, 280);
   }
   canvas.width  = size;
   canvas.height = size;
+  canvas.style.width  = size + "px";
+  canvas.style.height = size + "px";
 }
 
 function draw(shape, color) {
@@ -504,7 +455,6 @@ function newRound() {
   levelEl.innerText    = level;
   highScoreEl.innerText= highScore;
 
-  // FIX: return focus to canvas after every round so arrow keys work immediately
   canvas.focus();
 }
 
@@ -538,7 +488,7 @@ function check(choice) {
     else if (score === 20) level = 5;
     else if (score === 25) level = 6;
     else if (score === 30) level = 7;
-    setTimeout(newRound, 500);   // newRound() will call canvas.focus()
+    setTimeout(newRound, 500);
   } else {
     gameOver = true;
     resultEl.style.color  = "red";
@@ -558,7 +508,7 @@ function restart() {
   scoreEl.innerText     = score;
   levelEl.innerText     = level;
   highScoreEl.innerText = highScore;
-  newRound();   // newRound() will call canvas.focus()
+  newRound();
 }
 
 window.addEventListener("resize", () => {
@@ -568,8 +518,6 @@ window.addEventListener("resize", () => {
 
 resizeCanvas();
 
-// FIX: use window (not document) so the listener fires even when a button
-//      has keyboard focus after a mouse click.
 window.addEventListener("keydown", function(e) {
   if (document.getElementById("gameScreen").style.display !== "flex") return;
   if (!current) return;
