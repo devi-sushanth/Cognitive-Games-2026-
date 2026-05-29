@@ -1,319 +1,524 @@
+HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registration</title>
-  <style>
-    * { box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registration</title>
 
-    body {
-      font-family: Arial, sans-serif;
-      background: #f8f6f3;
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
+<style>
 
-    .card {
-      background: white;
-      width: 100%;
-      max-width: 480px;
-      padding: 28px;
-      border-radius: 22px;
-      box-shadow: 0 6px 25px rgba(0,0,0,0.08);
-    }
+body{
+  font-family: Arial, sans-serif;
+  background:#f8f6f3;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  margin:0;
+}
 
-    h1 {
-      margin-top: 0;
-      font-size: 30px;
-      color: #2d3436;
-    }
+.card{
+  background:white;
+  padding:30px;
+  width:90%;
+  max-width:450px;
+  border-radius:18px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.1);
+}
 
-    .main-btn {
-      width: 100%;
-      padding: 15px;
-      margin-top: 16px;
-      border: none;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #ff9472, #f27059);
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-    }
+h1{
+  margin-top:0;
+}
 
-    .main-btn:hover { transform: scale(1.02); }
+label{
+  display:block;
+  margin-top:16px;
+  font-weight:600;
+}
 
-    label {
-      display: block;
-      margin-top: 18px;
-      font-weight: 600;
-      color: #444;
-    }
+input{
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border:1px solid #ccc;
+  border-radius:10px;
+  box-sizing:border-box;
+}
 
-    input {
-      width: 100%;
-      padding: 13px;
-      margin-top: 8px;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      font-size: 15px;
-    }
+button{
+  margin-top:22px;
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:#e17055;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-    #adminForm,
-    #participantForm {
-      display: none;
-      margin-top: 25px;
-    }
+.participant-card{
+  margin-top:15px;
+  padding:12px;
+  border:1px solid #ccc;
+  border-radius:10px;
+}
 
-    .participant-card {
-      margin-top: 16px;
-      padding: 16px;
-      border-radius: 14px;
-      border: 1px solid #ddd;
-      background: #fafafa;
-    }
+.delete-btn{
+  background:#d63031;
+  margin-top:12px;
+}
 
-    .delete-btn {
-      margin-top: 12px;
-      padding: 10px 14px;
-      border: none;
-      border-radius: 10px;
-      background: #d63031;
-      color: white;
-      cursor: pointer;
-    }
-
-    .empty {
-      color: gray;
-      margin-top: 18px;
-    }
-  </style>
+</style>
 </head>
+
 <body>
+
 <div class="card">
 
-  <h1>Registration Portal</h1>
+<h1>Registration Portal</h1>
 
-  <!-- MAIN BUTTONS -->
-  <button class="main-btn" onclick="showAdminForm()">Admin Registration</button>
-  <button class="main-btn" onclick="showParticipantForm()">Participant Registration</button>
+<button onclick="showAdminForm()">
+Admin Registration
+</button>
 
-  <!-- ADMIN FORM -->
-  <div id="adminForm">
-    <label>Institution Name</label>
-    <input type="text" id="institution">
+<button onclick="showParticipantForm()">
+Participant Registration
+</button>
 
-    <label>Admin Name</label>
-    <input type="text" id="admin">
+<!-- ADMIN FORM -->
 
-    <label>Secret Admin Code</label>
-    <input type="password" id="secret">
+<div id="adminForm" style="display:none;">
 
-    <button class="main-btn" onclick="registerInstitution()">Complete Admin Registration</button>
-  </div>
+<label>Institution Name</label>
+<input type="text" id="institution">
 
-  <!-- PARTICIPANT FORM -->
-  <div id="participantForm">
-    <label>Participant Name</label>
-    <input type="text" id="participantName">
+<label>Admin Name</label>
+<input type="text" id="admin">
 
-    <label>Age</label>
-    <input type="number" id="participantAge">
+<label>Secret Admin Code</label>
+<input type="password" id="secret">
 
-    <label>Institution Name</label>
-    <input type="text" id="participantInstitution">
+<button onclick="registerInstitution()">
+Complete Admin Registration
+</button>
 
-    <button class="main-btn" onclick="addParticipant()">Register Participant</button>
+</div>
 
-    <div id="participantList"></div>
-  </div>
+<!-- PARTICIPANT FORM -->
+
+<div id="participantForm" style="display:none;">
+
+<label>Participant Name</label>
+<input type="text" id="participantName">
+
+<label>Age</label>
+<input type="number" id="participantAge">
+
+<label>Institution Name</label>
+<input type="text" id="participantInstitution">
+
+<button onclick="addParticipant()">
+Register Participant
+</button>
+
+<div id="participantList"></div>
+
+</div>
 
 </div>
 
 <script>
 
-  /* SHOW FORMS */
-  function showAdminForm() {
-    document.getElementById("adminForm").style.display = "block";
-    document.getElementById("participantForm").style.display = "none";
-  }
+function showAdminForm(){
 
-  function showParticipantForm() {
-    document.getElementById("participantForm").style.display = "block";
-    document.getElementById("adminForm").style.display = "none";
-    renderParticipants();
-  }
+  document.getElementById(
+    "adminForm"
+  ).style.display = "block";
 
-  /* ADMIN REGISTRATION */
-  function registerInstitution() {
-    const institution = document.getElementById("institution").value.trim();
-    const admin       = document.getElementById("admin").value.trim();
-    const secret      = document.getElementById("secret").value.trim();
+  document.getElementById(
+    "participantForm"
+  ).style.display = "none";
+}
 
-    const savedInstitution = localStorage.getItem("ctg_institution");
-    const savedSecret      = localStorage.getItem("ctg_admin_secret");
+function showParticipantForm(){
 
-    /* LOGIN — institution already exists */
-    if (savedInstitution && savedInstitution === institution) {
-      if (savedSecret !== secret) {
-        alert("Wrong Secret Code");
-        return;
-      }
-      alert("Admin Login Successful");
-      localStorage.setItem("ctg_registered", "true");
-      localStorage.setItem("ctg_role", "admin");
-      window.location.href = "index.html";
-      return;
-    }
+  document.getElementById(
+    "participantForm"
+  ).style.display = "block";
 
-    /* VALIDATION */
-    if (!institution || !admin || !secret) {
-      alert("Please fill all fields");
-      return;
-    }
-
-    /* SAVE */
-    localStorage.setItem("ctg_registered", "true");
-    localStorage.setItem("ctg_institution", institution);
-    localStorage.setItem("ctg_admin", admin);
-    localStorage.setItem("ctg_admin_secret", secret);
-    localStorage.setItem("ctg_role", "admin");
-
-    if (!localStorage.getItem("ctg_participants")) {
-      localStorage.setItem("ctg_participants", JSON.stringify([]));
-    }
-
-    // ✅ FIX 1: was missing + operator before variable
-    logActivity("Institution Registered : " + institution);
-
-    alert("Admin registration successful");
-    window.location.href = "index.html";
-  }
-
-  /* PARTICIPANT REGISTRATION */
-  function addParticipant() {
-    const name        = document.getElementById("participantName").value.trim();
-    const age         = document.getElementById("participantAge").value.trim();
-    const institution = document.getElementById("participantInstitution").value.trim();
-
-    if (!name || !age || !institution) {
-      alert("Please fill all fields");
-      return;
-    }
-
-    const savedInstitution = localStorage.getItem("ctg_institution");
-    if (savedInstitution !== institution) {
-      alert("Institution not found. Please check the institution name.");
-      return;
-    }
-
-    let participants = JSON.parse(localStorage.getItem("ctg_participants")) || [];
-
-    // ✅ FIX 2: ID is always a clean unique string — no undefined
-    const participantId = "CTG" + Date.now();
-
-    participants.push({ id: participantId, name, age, institution });
-
-    localStorage.setItem("ctg_participants", JSON.stringify(participants));
-    localStorage.setItem("ctg_registered", "true");
-    localStorage.setItem("ctg_role", "participant");
-    localStorage.setItem("ctg_current_participant", name);
-
-    logActivity("Participant Added : " + name);
-
-    alert("Participant registered successfully! Your ID is: " + participantId);
-    window.location.href = "index.html";
-  }
-
-  /* RENDER PARTICIPANT LIST */
-  function renderParticipants() {
-    const adminInstitution = localStorage.getItem("ctg_institution");
-    const role             = localStorage.getItem("ctg_role");
-
-    // ✅ FIX 3: Keep the full participants array; work with a filtered VIEW only for display.
-    //           Store the real index on the delete button so deletion hits the right record.
-    let allParticipants = JSON.parse(localStorage.getItem("ctg_participants")) || [];
-
-    // Assign IDs to any legacy records that are missing them
-    let changed = false;
-    allParticipants = allParticipants.map((p, i) => {
-      if (!p.id) {
-        p.id = "CTGOLD" + (i + 1);
-        changed = true;
-      }
-      return p;
-    });
-    if (changed) {
-      localStorage.setItem("ctg_participants", JSON.stringify(allParticipants));
-    }
-
-    // Build a filtered list that keeps track of the REAL index in allParticipants
-    const filtered = allParticipants
-      .map((p, realIndex) => ({ ...p, realIndex }))
-      .filter(p => p.institution === adminInstitution);
-
-    let html = "";
-
-    if (filtered.length === 0) {
-      html = '<p class="empty">No participants registered</p>';
-    }
-
-    filtered.forEach(p => {
-      html += `
-        <div class="participant-card">
-          <b>${p.name}</b><br><br>
-          Age: ${p.age}<br>
-          Institution: ${p.institution}<br>
-          ID: ${p.id}<br>
-          ${role === "admin"
-            // ✅ FIX 4: pass realIndex so delete always removes the correct record
-            ? `<button class="delete-btn" onclick="deleteParticipant(${p.realIndex})">Delete</button>`
-            : ""
-          }
-        </div>
-      `;
-    });
-
-    document.getElementById("participantList").innerHTML = html;
-  }
-
-  /* DELETE PARTICIPANT */
-  function deleteParticipant(realIndex) {
-    if (!confirm("Are you sure?")) return;
-
-    const word = prompt("Type DELETE to confirm");
-    if (word !== "DELETE") {
-      alert("Deletion cancelled");
-      return;
-    }
-
-    let participants = JSON.parse(localStorage.getItem("ctg_participants")) || [];
-    const removed = participants[realIndex];
-
-    participants.splice(realIndex, 1);
-    localStorage.setItem("ctg_participants", JSON.stringify(participants));
-
-    // ✅ FIX 5: was missing + operator before variable
-    logActivity("Participant Deleted : " + removed.name);
-
-    renderParticipants();
-  }
-
-  /* ACTIVITY LOG */
-  function logActivity(message) {
-    let logs = JSON.parse(localStorage.getItem("ctg_logs")) || [];
-    logs.push({ message, time: new Date().toLocaleString() });
-    localStorage.setItem("ctg_logs", JSON.stringify(logs));
-  }
+  document.getElementById(
+    "adminForm"
+  ).style.display = "none";
 
   renderParticipants();
+}
+
+/* ADMIN REGISTRATION */
+
+function registerInstitution(){
+
+  const institution =
+  document.getElementById(
+    "institution"
+  ).value.trim();
+
+  const admin =
+  document.getElementById(
+    "admin"
+  ).value.trim();
+
+  const secret =
+  document.getElementById(
+    "secret"
+  ).value.trim();
+
+  const savedInstitution =
+  localStorage.getItem(
+    "ctg_institution"
+  );
+
+  const savedSecret =
+  localStorage.getItem(
+    "ctg_admin_secret"
+  );
+
+  /* LOGIN */
+
+  if(savedInstitution === institution){
+
+    if(savedSecret !== secret){
+
+      alert("Wrong Secret Code");
+      return;
+    }
+
+    alert("Admin Login Successful");
+
+    localStorage.setItem(
+      "ctg_registered",
+      "true"
+    );
+
+    localStorage.setItem(
+      "ctg_role",
+      "admin"
+    );
+
+    window.location.href =
+    "index.html";
+
+    return;
+  }
+
+  if(
+    !institution ||
+    !admin ||
+    !secret
+  ){
+
+    alert("Please fill all fields");
+    return;
+  }
+
+  /* SAVE */
+
+  localStorage.setItem(
+    "ctg_registered",
+    "true"
+  );
+
+  localStorage.setItem(
+    "ctg_institution",
+    institution
+  );
+
+  localStorage.setItem(
+    "ctg_admin",
+    admin
+  );
+
+  localStorage.setItem(
+    "ctg_admin_secret",
+    secret
+  );
+
+  localStorage.setItem(
+    "ctg_role",
+    "admin"
+  );
+
+  if(
+    !localStorage.getItem(
+      "ctg_participants"
+    )
+  ){
+
+    localStorage.setItem(
+      "ctg_participants",
+      JSON.stringify([])
+    );
+  }
+
+  logActivity(
+    "Institution Registered : " +
+    institution
+  );
+
+  alert(
+    "Admin registration successful"
+  );
+
+  window.location.href =
+  "index.html";
+}
+
+/* PARTICIPANT REGISTRATION */
+
+function addParticipant(){
+
+  const name =
+  document.getElementById(
+    "participantName"
+  ).value.trim();
+
+  const age =
+  document.getElementById(
+    "participantAge"
+  ).value.trim();
+
+  const institution =
+  document.getElementById(
+    "participantInstitution"
+  ).value.trim();
+
+  if(
+    !name ||
+    !age ||
+    !institution
+  ){
+
+    alert("Please fill all fields");
+    return;
+  }
+
+  const savedInstitution =
+  localStorage.getItem(
+    "ctg_institution"
+  );
+
+  if(savedInstitution !== institution){
+
+    alert(
+      "Institution not found"
+    );
+
+    return;
+  }
+
+  let participants =
+  JSON.parse(
+    localStorage.getItem(
+      "ctg_participants"
+    )
+  ) || [];
+
+  /* FIXED ID */
+
+  const participantId =
+  "CTG" + Date.now();
+
+  participants.push({
+
+    id: participantId,
+
+    name: name,
+
+    age: age,
+
+    institution: institution
+  });
+
+  localStorage.setItem(
+    "ctg_participants",
+    JSON.stringify(participants)
+  );
+
+  localStorage.setItem(
+    "ctg_registered",
+    "true"
+  );
+
+  localStorage.setItem(
+    "ctg_role",
+    "participant"
+  );
+
+  localStorage.setItem(
+    "ctg_current_participant",
+    name
+  );
+
+  logActivity(
+    "Participant Added : " +
+    name
+  );
+
+  alert(
+    "Participant registered successfully\n\nYour ID : " +
+    participantId
+  );
+
+  window.location.href =
+  "index.html";
+}
+
+/* PARTICIPANT LIST */
+
+function renderParticipants(){
+
+  let participants =
+  JSON.parse(
+    localStorage.getItem(
+      "ctg_participants"
+    )
+  ) || [];
+
+  let html = "";
+
+  if(participants.length === 0){
+
+    html =
+    `
+    <p>No participants registered</p>
+    `;
+  }
+
+  participants.forEach(
+    (p,index)=>{
+
+    html +=
+    `
+    <div class="participant-card">
+
+      <b>${p.name}</b><br><br>
+
+      Age : ${p.age}<br>
+
+      Institution : ${p.institution}<br>
+
+      ID : ${p.id}<br>
+
+      ${
+        localStorage.getItem(
+          "ctg_role"
+        ) === "admin"
+
+        ?
+
+        `
+        <button
+        class="delete-btn"
+        onclick="deleteParticipant(${index})">
+
+        Delete
+
+        </button>
+        `
+
+        :
+
+        ""
+      }
+
+    </div>
+    `;
+  });
+
+  document.getElementById(
+    "participantList"
+  ).innerHTML = html;
+}
+
+/* DELETE */
+
+function deleteParticipant(index){
+
+  const confirmDelete =
+  confirm("Are you sure?");
+
+  if(!confirmDelete){
+    return;
+  }
+
+  const word =
+  prompt(
+    "Type DELETE to confirm"
+  );
+
+  if(word !== "DELETE"){
+
+    alert("Deletion cancelled");
+    return;
+  }
+
+  let participants =
+  JSON.parse(
+    localStorage.getItem(
+      "ctg_participants"
+    )
+  ) || [];
+
+  const removed =
+  participants[index];
+
+  participants.splice(index,1);
+
+  localStorage.setItem(
+    "ctg_participants",
+    JSON.stringify(participants)
+  );
+
+  logActivity(
+    "Participant Deleted : " +
+    removed.name
+  );
+
+  renderParticipants();
+}
+
+/* LOGS */
+
+function logActivity(message){
+
+  let logs =
+  JSON.parse(
+    localStorage.getItem(
+      "ctg_logs"
+    )
+  ) || [];
+
+  logs.push({
+
+    message: message,
+
+    time:
+    new Date()
+    .toLocaleString()
+
+  });
+
+  localStorage.setItem(
+    "ctg_logs",
+    JSON.stringify(logs)
+  );
+}
+
+renderParticipants();
 
 </script>
+
 </body>
 </html>
