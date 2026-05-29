@@ -1361,9 +1361,10 @@ function adminAddParticipant(){
     "newParticipantAge"
   ).value = "";
 
+  alert("Participant added");
+
   renderDashboardParticipants();
 }
-
 /* DELETE */
 
 function deleteDashboardParticipant(index){
@@ -1412,7 +1413,23 @@ function deleteDashboardParticipant(index){
 
   renderDashboardParticipants();
 }
+function logoutUser(){
 
+  localStorage.removeItem(
+    "ctg_registered"
+  );
+
+  localStorage.removeItem(
+    "ctg_role"
+  );
+
+  localStorage.removeItem(
+    "ctg_current_participant"
+  );
+
+  window.location.href =
+    "registration.html";
+}
 </script>
   </body>
 </html>
