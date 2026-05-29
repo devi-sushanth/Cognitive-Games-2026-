@@ -1,0 +1,1966 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no"
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Simon's Path</title>
+    <script>
+      (function () {
+        var t = localStorage.getItem("ctg-theme") || "light";
+        document.documentElement.setAttribute("data-theme", t);
+      })();
+    </script>
+    <style>
+      :root {
+        --bg: #f8f6f3;
+        --surface: #ffffff;
+        --surface2: #f0ede8;
+        --text: #2d3436;
+        --text-light: #636e72;
+        --border: #e0dbd5;
+        --accent: #e17055;
+        --accent-soft: rgba(225, 112, 85, 0.12);
+        --success: #00b894;
+        --error: #e17055;
+        --highlight: #74b9ff;
+        --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.07);
+        --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+        --color-bg: var(--bg);
+        --color-surface: var(--surface);
+        --color-text: var(--text);
+        --color-text-light: var(--text-light);
+        --color-memory: #6c5ce7;
+        --color-success: var(--success);
+        --color-error: var(--error);
+        --color-highlight: var(--highlight);
+        --color-game-bg: var(--surface2);
+
+        --left-border: #c0392b;
+        --left-bg: linear-gradient(135deg, #e55039, #c0392b);
+        --left-text: rgba(255, 255, 255, 0.86);
+        --right-border: #1a6fc4;
+        --right-bg: linear-gradient(135deg, #2e86de, #1a6fc4);
+        --right-text: rgba(255, 255, 255, 0.86);
+      }
+
+      [data-theme="dark"] {
+        --bg: #141414;
+        --surface: #1f1f1f;
+        --surface2: #2a2a2a;
+        --text: #f0ede8;
+        --text-light: #9a9590;
+        --border: #333333;
+        --accent: #ff7a5a;
+        --accent-soft: rgba(255, 122, 90, 0.15);
+        --success: #00d4a8;
+        --error: #ff7a5a;
+        --highlight: #90c8ff;
+        --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+
+        --color-memory: #9b8dff;
+        --left-border: #d14f3a;
+        --left-bg: linear-gradient(135deg, #d14f3a, #a53a2f);
+        --left-text: rgba(255, 255, 255, 0.9);
+        --right-border: #2b7ecf;
+        --right-bg: linear-gradient(135deg, #2b7ecf, #1f5f9d);
+        --right-text: rgba(255, 255, 255, 0.9);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: var(--color-bg);
+        color: var(--color-text);
+        font-size: 20px;
+        line-height: 1.5;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+      }
+
+      .app {
+        width: 100%;
+        max-width: none;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #ctg-zoom-wrap {
+  height: 100dvh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  overflow-y: auto;
+  overflow-x: auto; /* 👈 ADD THIS */
+}
+      .panel {
+        background: var(--color-bg);
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+        padding: 0;
+
+        .screen.prestart .game-top,
+        .screen.prestart .status,
+        .screen.prestart .progress,
+        .screen.prestart .controls,
+        .screen.prestart .help {
+          display: none;
+        }
+
+        .screen.prestart .game-area {
+          min-height: 0;
+          justify-content: center;
+        }
+
+        .instructions-card {
+          width: 100%;
+          max-width: 460px;
+          border-radius: 18px;
+          border: 2px solid var(--border);
+          background: linear-gradient(
+            180deg,
+            var(--color-surface) 0%,
+            var(--color-game-bg) 100%
+          );
+          box-shadow: var(--shadow-sm);
+          padding: 16px;
+          display: grid;
+          gap: 10px;
+        }
+
+        .instructions-title {
+          margin: 0;
+          text-align: center;
+          font-size: 28px;
+          font-weight: 800;
+          color: var(--color-text);
+        }
+
+        .instructions-copy {
+          display: grid;
+          gap: 8px;
+        }
+
+        .instruction-step {
+          display: flex;
+          gap: 10px;
+          align-items: flex-start;
+          margin: 0;
+          font-size: 18px;
+          line-height: 1.35;
+          color: var(--color-text-light);
+        }
+
+        .instruction-step strong {
+          color: var(--color-text);
+          min-width: 1.5em;
+        }
+      }
+
+      .screen {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      .screen.active {
+        display: flex;
+      }
+
+      .menu-screen {
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: max(env(safe-area-inset-top), 8px)
+          max(env(safe-area-inset-right), 12px) 8px
+          max(env(safe-area-inset-left), 12px);
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        gap: 8px;
+        min-height: 52px;
+      }
+
+      .back-btn {
+        background: var(--surface2);
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        padding: 7px 12px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        min-height: 38px;
+        flex-shrink: 0;
+      }
+
+      .header-title {
+        font-size: clamp(15px, 4vw, 18px);
+        font-weight: 700;
+        text-align: center;
+        flex: 1;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+
+      .level-badge {
+        background: rgba(225, 112, 85, 0.13);
+        color: var(--accent);
+        border-radius: 16px;
+        padding: 5px 12px;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .settings-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--surface2);
+        border: 1.5px solid var(--border);
+        font-size: 16px;
+        text-decoration: none;
+        color: var(--text-light);
+      }
+
+      .menu-body {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        padding: 14px max(env(safe-area-inset-right), 14px)
+          max(env(safe-area-inset-bottom), 14px)
+          max(env(safe-area-inset-left), 14px);
+      }
+
+      .menu-hero,
+      .how-to {
+        width: 100%;
+        max-width: 480px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+      }
+
+      .menu-hero {
+        border-radius: 18px;
+        padding: 20px 16px;
+        text-align: center;
+        box-shadow: var(--shadow-md);
+      }
+
+      .game-icon-big {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 12px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6c5ce7, #4d3dbb);
+        color: #fff;
+        font-size: 34px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 6px 20px rgba(108, 92, 231, 0.35);
+      }
+
+      .domain-tag {
+        display: inline-block;
+        background: rgba(108, 92, 231, 0.15);
+        color: var(--color-memory);
+        border-radius: 16px;
+        padding: 3px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        margin: 8px 0;
+      }
+
+      .menu-desc {
+        color: var(--text-light);
+        font-size: clamp(13px, 3.5vw, 15px);
+        line-height: 1.5;
+      }
+
+      .how-to {
+        border-radius: 16px;
+        padding: 14px 16px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .how-to h3 {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-light);
+        margin-bottom: 10px;
+        font-weight: 700;
+      }
+
+      .how-to-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+        font-size: clamp(13px, 3.5vw, 15px);
+      }
+
+      .key-badge {
+        background: var(--surface2);
+        border: 2px solid var(--border);
+        border-radius: 7px;
+        padding: 4px 10px;
+        font-weight: 700;
+        font-size: 15px;
+        min-width: 44px;
+        text-align: center;
+      }
+
+      .start-btn {
+        width: 100%;
+        max-width: 480px;
+        background: linear-gradient(135deg, var(--color-memory), #4d3dbb);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 15px;
+        font-size: clamp(17px, 4.5vw, 20px);
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 5px 16px rgba(77, 61, 187, 0.35);
+      }
+
+      h1,
+      h2,
+      p {
+        margin: 0;
+      }
+
+      .subtitle {
+        color: var(--color-text-light);
+        font-size: 20px;
+      }
+
+      .game-top {
+        margin-top: 0;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      .game-body {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 10px max(env(safe-area-inset-right), 12px)
+          max(env(safe-area-inset-bottom), 12px)
+          max(env(safe-area-inset-left), 12px);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+     
+
+      .game-meta {
+        text-align: center;
+        background: var(--color-surface);
+        border: 2px solid var(--border);
+        border-radius: 10px;
+        padding: 8px;
+      }
+
+      .game-area {
+  margin-top: 14px;
+  border-radius: 14px;
+  background: var(--color-game-bg);
+  border: 2px solid var(--border);
+  padding: 16px;
+  min-height: 360px;
+  max-height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  position: relative;
+  scroll-margin-top: 10px;
+
+  overflow-y: auto; 
+}
+
+      .status {
+        text-align: center;
+        min-height: 42px;
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--color-text);
+      }
+
+      .progress {
+        text-align: center;
+        color: var(--color-text-light);
+      }
+
+      .pads {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .start-gate {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .start-game-btn {
+        width: 100%;
+        max-width: 420px;
+        min-height: 110px;
+        border: 3px solid var(--color-memory);
+        border-radius: 16px;
+        background: color-mix(
+          in srgb,
+          var(--color-memory) 14%,
+          var(--color-surface)
+        );
+        color: var(--color-text);
+        font-size: 34px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .start-game-btn:focus-visible {
+        outline: 4px solid var(--color-highlight);
+        outline-offset: 4px;
+      }
+
+      .game-area.idle .pads,
+      .game-area.idle .directions,
+      .game-area.idle .feedback-row {
+        display: none;
+      }
+
+      .game-area.idle .start-gate {
+        display: flex;
+      }
+
+      .game-area:not(.idle) .start-gate {
+        display: none;
+      }
+
+      .pad {
+        border-radius: 14px;
+        border: 4px solid var(--border);
+        min-height: 170px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 700;
+        background: color-mix(
+          in srgb,
+          var(--color-surface) 75%,
+          var(--color-game-bg)
+        );
+        color: var(--color-text);
+        transition:
+          background-color 240ms ease-out,
+          transform 240ms ease-out,
+          box-shadow 240ms ease-out;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        cursor: pointer;
+      }
+
+      .pad:not(.interactive) {
+        opacity: 0.92;
+      }
+
+      .pad.flash {
+        background: #ffd700;
+        transform: scale(1.12);
+        box-shadow:
+          0 0 0 6px #d4af00 inset,
+          0 8px 24px rgba(212, 175, 0, 0.4);
+        color: #1f272b;
+      }
+
+      .pad.correct {
+        background: #00d084;
+        transform: scale(1.08);
+        box-shadow:
+          0 0 0 6px #008f5a inset,
+          0 8px 20px rgba(0, 208, 132, 0.35);
+        color: #fff;
+      }
+
+      .pad.wrong {
+        background: #ff6b5a;
+        transform: scale(1.06);
+        box-shadow:
+          0 0 0 6px #c44135 inset,
+          0 8px 20px rgba(255, 107, 90, 0.4);
+        color: #fff;
+      }
+
+      .directions {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 600;
+        color: var(--color-text-light);
+      }
+
+      .direction-left {
+        color: var(--accent);
+      }
+
+      .direction-right {
+        color: var(--highlight);
+      }
+
+      .feedback-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        text-align: center;
+        color: var(--color-text-light);
+      }
+.game-meta,
+.status,
+.progress,
+.feedback-row {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word; 
+  text-align: center;
+}
+      .pad-left {
+        border-color: var(--left-border);
+        border-style: solid;
+        background: var(--left-bg);
+        color: var(--left-text);
+      }
+
+      .pad-right {
+        border-color: var(--right-border);
+        border-style: solid;
+        background: var(--right-bg);
+        color: var(--right-text);
+      }
+
+      .pad-arrow {
+        font-size: 58px;
+        line-height: 1;
+        font-weight: 800;
+      }
+
+      .pad-side {
+        min-width: 44px;
+        min-height: 44px;
+        border-radius: 999px;
+        border: 3px solid currentColor;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .pad.awaiting {
+        animation: padPulse 900ms ease-in-out infinite;
+      }
+
+      .paused-overlay {
+        position: absolute;
+        inset: 0;
+        border-radius: 14px;
+        background: rgba(0, 0, 0, 0.62);
+        color: var(--color-surface);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 16px;
+        font-size: 24px;
+        font-weight: 700;
+      }
+
+      .paused-overlay[hidden] {
+        display: none;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+
+      @keyframes padPulse {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(116, 185, 255, 0.3);
+        }
+        50% {
+          transform: scale(1.06);
+          box-shadow: 0 0 0 12px rgba(116, 185, 255, 0.08);
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(116, 185, 255, 0.3);
+        }
+      }
+
+      .controls {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+
+      .btn {
+        border: 2px solid var(--border);
+        border-radius: 10px;
+        background: var(--color-surface);
+        color: var(--color-text);
+        min-height: 80px;
+        min-width: 180px;
+        font-size: 20px;
+        font-weight: 600;
+        padding: 10px 16px;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .btn.primary {
+        border-color: var(--color-memory);
+        background: color-mix(
+          in srgb,
+          var(--color-memory) 14%,
+          var(--color-surface)
+        );
+      }
+
+      .btn:focus-visible,
+      .game-area:focus-visible {
+        outline: 4px solid var(--color-highlight);
+        outline-offset: 4px;
+      }
+
+      .help {
+        margin-top: 8px;
+        color: var(--color-text-light);
+        font-weight: 600;
+      }
+
+      .result-icon {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        border: 3px solid var(--color-memory);
+        background: color-mix(
+          in srgb,
+          var(--color-memory) 14%,
+          var(--color-surface)
+        );
+        color: var(--color-memory);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 44px;
+        margin: 0 auto;
+      }
+
+      .result-title {
+        text-align: center;
+        margin-top: 12px;
+      }
+
+      .results-body {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 14px max(env(safe-area-inset-right), 14px)
+          max(env(safe-area-inset-bottom), 14px)
+          max(env(safe-area-inset-left), 14px);
+      }
+
+      .result-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .result-controls .btn {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .result-card {
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        background: var(--color-game-bg);
+        text-align: center;
+        padding: 10px;
+      }
+
+      .result-card strong {
+        display: block;
+        font-size: 46px;
+        line-height: 1;
+      }
+
+      .result-card span {
+        display: block;
+        margin-top: 6px;
+        color: var(--color-text-light);
+        font-size: 20px;
+      }
+
+      .status-ok::before {
+        content: "✓ ";
+      }
+
+      .status-warn::before {
+        content: "! ";
+      }
+
+      @media (max-width: 540px) {
+        .panel {
+          padding: 0;
+          border-radius: 0;
+        }
+
+        .instructions-card {
+          padding: 14px;
+          gap: 8px;
+        }
+
+        .instructions-title {
+          font-size: 22px;
+        }
+
+        .instruction-step {
+          font-size: 16px;
+          gap: 8px;
+        }
+
+        .game-area {
+          padding: 12px;
+          gap: 12px;
+          min-height: 0;
+        }
+
+        .pad {
+          min-height: 112px;
+          font-size: 18px;
+          gap: 6px;
+        }
+
+        .pad-arrow {
+          font-size: 46px;
+        }
+
+        .status {
+          font-size: 22px;
+          min-height: 34px;
+        }
+
+        .progress {
+          font-size: 20px;
+        }
+
+        .game-top {
+          grid-template-columns: 1fr;
+        }
+
+        .feedback-row {
+          grid-template-columns: 1fr;
+          gap: 6px;
+          font-size: 19px;
+        }
+
+        .directions {
+          font-size: 18px;
+        }
+
+        .controls {
+          width: 100%;
+        }
+
+        .btn {
+          width: 100%;
+          min-width: 0;
+        }
+
+        .help {
+          font-size: 20px;
+          text-align: center;
+        }
+
+        .result-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .result-card strong {
+          font-size: 38px;
+        }
+      }
+
+      @media (orientation: landscape) and (hover: none) {
+        .app {
+          max-width: 100%;
+        }
+
+        .panel {
+          padding: 0;
+        }
+
+        .game-top {
+          margin-top: 10px;
+        }
+
+        .game-area {
+          margin-top: 10px;
+          min-height: 0;
+          padding: 10px;
+          gap: 8px;
+        }
+
+        .status {
+          min-height: 30px;
+          font-size: 21px;
+        }
+
+        .progress {
+          font-size: 19px;
+        }
+
+        .start-game-btn {
+          min-height: 88px;
+          max-width: 320px;
+          font-size: 26px;
+        }
+
+        .pads {
+          gap: 10px;
+        }
+
+        .pad {
+          min-height: 104px;
+          gap: 6px;
+        }
+
+        .pad-arrow {
+          font-size: 44px;
+        }
+
+        .pad-side {
+          min-width: 36px;
+          min-height: 36px;
+          border-width: 2px;
+          font-size: 18px;
+        }
+
+        .directions {
+          font-size: 17px;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 8px 16px;
+        }
+
+        .feedback-row {
+          font-size: 18px;
+          gap: 8px;
+        }
+
+        .controls {
+          margin-top: 8px;
+        }
+
+        .btn {
+          min-height: 72px;
+        }
+
+        .help {
+          margin-top: 6px;
+          font-size: 18px;
+          text-align: center;
+        }
+
+       .game-area {
+  overflow-y: auto;
+}
+
+.pad {
+  min-height: 80px;   /* reduce from 104px */
+  padding: 6px;
+}
+
+.pad-arrow {
+  font-size: 32px; /* reduce from 44px */
+}
+
+.status {
+  font-size: 18px;
+}
+
+.progress {
+  font-size: 16px;
+}
+
+.feedback-row {
+  font-size: 14px;
+}
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+
+      @media (prefers-contrast: more) {
+        :root {
+          --color-bg: #ffffff;
+          --color-surface: #ffffff;
+          --color-text: #111111;
+          --color-text-light: #1b1b1b;
+          --color-highlight: #003ee6;
+          --color-game-bg: #f1f4f6;
+        }
+
+        .panel,
+        .game-meta,
+        .game-area,
+        .btn,
+        .pad {
+          border-width: 3px;
+        }
+      }
+      .zoom-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 999;
+}
+
+.zoom-controls button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  font-size: 22px;
+  font-weight: bold;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  cursor: pointer;
+}
+
+.zoom-controls button:hover {
+  background: rgba(0,0,0,0.8);
+}
+    </style>
+  </head>
+  <body>
+    <div id="ctg-zoom-wrap">
+      <main class="app" aria-live="polite">
+        <section
+          id="menuScreen"
+          class="screen active panel menu-screen"
+          aria-label="Simon Path Menu"
+        >
+          <div class="header">
+            <a onclick="parent.goBack(); return false;" href="#" class="back-btn">&larr; Back</a>
+            <span class="header-title">Simon's Path</span>
+            <div class="header-actions">
+              <div class="level-badge">Memory</div>
+              <a onclick="parent.openSettings(); return false;" href="#" class="settings-link" title="Settings"
+                >⚙️</a
+              >
+            </div>
+          </div>
+
+          <div class="menu-body">
+            <div class="menu-hero">
+              <div class="game-icon-big">🧭</div>
+              <h2>Simon's Path</h2>
+              <div class="domain-tag">Memory · Sequence Recall</div>
+              <p class="menu-desc">
+                Watch the left-right sequence, then replay it in the exact same
+                order.
+              </p>
+            </div>
+
+            <div class="how-to">
+              <h3>How to Play</h3>
+              <div class="how-to-row">
+                <span class="key-badge">1</span
+                ><span
+                  ><strong>Watch</strong> the full left-right pattern before you
+                  move.</span
+                >
+              </div>
+              <div class="how-to-row">
+                <span class="key-badge">2</span
+                ><span
+                  ><strong>Repeat</strong> the sequence in the exact same
+                  order.</span
+                >
+              </div>
+              <div class="how-to-row">
+                <span class="key-badge">3</span
+                ><span
+                  ><strong>Tap</strong> left or right on every step until the
+                  pattern ends.</span
+                >
+              </div>
+            </div>
+
+            <button id="menuStartBtn" class="start-btn" type="button">
+              ▶ Start Game
+            </button>
+          </div>
+        </section>
+
+        <section
+          id="gameScreen"
+          class="screen panel"
+          aria-label="Simon Path Game"
+        >
+          <div class="header">
+            <button id="gameBackBtn" class="back-btn" type="button">
+              &larr; Back
+            </button>
+            <span class="header-title">Simon's Path</span>
+            <div class="header-actions">
+              <div id="gameLevelBadge" class="level-badge">Level 1</div>
+            </div>
+          </div>
+
+          <div class="game-body">
+            <h2 class="sr-only">Simon's Path</h2>
+
+            <div class="game-top">
+              <div class="game-meta">Score: <span id="scoreValue">0</span></div>
+              <div class="game-meta">Level: <span id="levelValue">1</span></div>
+              <div class="game-meta">
+                Length: <span id="lengthValue">2</span>
+              </div>
+            </div>
+
+            <div
+              id="gameArea"
+              class="game-area"
+              tabindex="-1"
+              aria-label="Gameplay Area"
+            >
+              <p
+                id="phaseText"
+                class="status status-info"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                Get ready...
+              </p>
+              <p
+                id="progressText"
+                class="progress"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                Watch and repeat the sequence.
+              </p>
+
+              <div class="pads">
+                <div
+                  id="padLeft"
+                  class="pad pad-left"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Choose left"
+                  aria-disabled="true"
+                >
+                  <span class="pad-arrow" aria-hidden="true">&larr;</span>
+                  <span class="pad-side" aria-hidden="true">L</span>
+                </div>
+                <div
+                  id="padRight"
+                  class="pad pad-right"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Choose right"
+                  aria-disabled="true"
+                >
+                  <span class="pad-arrow" aria-hidden="true">&rarr;</span>
+                  <span class="pad-side" aria-hidden="true">R</span>
+                </div>
+              </div>
+
+              <div class="directions">
+                <span class="direction-left">&larr; LEFT BUTTON (ORANGE)</span>
+                <span class="direction-right">RIGHT BUTTON (BLUE) &rarr;</span>
+              </div>
+
+              <div class="feedback-row">
+                <div>Failed sequences: <span id="failValue">0</span>/3</div>
+                <div>Correct steps: <span id="stepValue">0</span></div>
+                <div>Best streak: <span id="bestStreakValue">0</span></div>
+              </div>
+
+              <div
+                id="pausedOverlay"
+                class="paused-overlay"
+                hidden
+                role="alert"
+                aria-live="assertive"
+                aria-atomic="true"
+              >
+                Paused<br />
+                Return to this tab to continue.
+              </div>
+            </div>
+
+            <p class="help">
+              Input during gameplay: Arrow Left for left signal, Arrow Right for
+              right signal.
+            </p>
+          </div>
+          <div class="zoom-controls">
+  <button onclick="zoomOut()">−</button>
+  <button onclick="zoomIn()">+</button>
+</div>
+        </section>
+
+        <section id="resultScreen" class="screen panel" aria-label="Results">
+          <div class="header">
+            <button id="resultHeaderBackBtn" class="back-btn" type="button">
+              &larr; Back
+            </button>
+            <span class="header-title">Simon's Path</span>
+            <div class="header-actions">
+              <div id="resultLevelBadge" class="level-badge">Level 1</div>
+            </div>
+          </div>
+          <div class="results-body">
+            <div class="result-icon" aria-hidden="true">★</div>
+            <h2 id="resultMessage" class="result-title">
+              Great effort! Keep practising!
+            </h2>
+            <p class="subtitle">You completed Simon's Path.</p>
+
+            <div class="result-grid" aria-label="Session stats">
+              <div class="result-card">
+                <strong id="resultScore">0</strong>
+                <span>Score</span>
+              </div>
+              <div class="result-card">
+                <strong id="resultLevel">1</strong>
+                <span>Level</span>
+              </div>
+              <div class="result-card">
+                <strong id="resultFails">0</strong>
+                <span>Failed</span>
+              </div>
+            </div>
+
+            <div class="controls result-controls">
+              <button id="playAgainBtn" class="btn primary" type="button">
+                Play Again
+              </button>
+              <button id="resultBackBtn" class="btn" type="button">
+                Back to Menu
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <div
+        id="srAnnounce"
+        class="sr-only"
+        aria-live="polite"
+        aria-atomic="true"
+      ></div>
+    </div>
+
+    <script>
+      (function () {
+        const SUCCESS_MESSAGES = [
+          "Great memory!",
+          "Excellent recall!",
+          "Nice focus, keep going!",
+        ];
+
+        const FAIL_MESSAGES = [
+          "Almost there, try again!",
+          "Good attempt, watch closely this time.",
+          "Nice effort, you are improving.",
+        ];
+
+        const InputHandler = {
+          listeners: [],
+          lastAt: 0,
+          lockMs: 150,
+
+          init() {
+            document.addEventListener(
+              "keydown",
+              (event) => {
+                if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
+                  return;
+                }
+
+                event.preventDefault();
+                if (event.repeat) {
+                  return;
+                }
+
+                const now = performance.now();
+                if (now - this.lastAt < this.lockMs) {
+                  return;
+                }
+                this.lastAt = now;
+
+                this.emit(event.key === "ArrowLeft" ? "left" : "right");
+              },
+              { passive: false },
+            );
+          },
+
+          subscribe(callback) {
+            this.listeners.push(callback);
+            return () => {
+              this.listeners = this.listeners.filter(
+                (listener) => listener !== callback,
+              );
+            };
+          },
+
+          emit(direction) {
+            this.listeners.forEach((listener) => listener(direction));
+          },
+
+          clearAll() {
+            this.listeners = [];
+          },
+        };
+        function isSoundEnabled() {
+    return localStorage.getItem('ctg-sound') !== 'off';
+  }
+
+        const SoundEngine = {
+          ctx: null,
+
+          init() {
+  if (!isSoundEnabled()) return;
+
+  if (!this.ctx) {
+              const Ctx = window.AudioContext || window.webkitAudioContext;
+              this.ctx = Ctx ? new Ctx() : null;
+            }
+            this.ensureRunning();
+          },
+
+          ensureRunning() {
+            if (this.ctx && this.ctx.state === "suspended") {
+              this.ctx.resume().catch(() => {});
+            }
+          },
+
+          tone(freq, duration, type, gain) {
+  if (!this.ctx || !isSoundEnabled()) {
+    return;
+  }
+            this.ensureRunning();
+            const now = this.ctx.currentTime + 0.01;
+            const osc = this.ctx.createOscillator();
+            const amp = this.ctx.createGain();
+            osc.type = type || "sine";
+            osc.frequency.setValueAtTime(freq, now);
+            amp.gain.setValueAtTime(gain || 0.02, now);
+            amp.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+            osc.connect(amp);
+            amp.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + duration);
+          },
+
+          playTick() {
+            this.tone(800, 0.06, "sine", 0.018);
+          },
+
+          playLeftSignal() {
+            this.tone(220, 0.22, "triangle", 0.032);
+          },
+
+          playRightSignal() {
+            this.tone(440, 0.22, "sine", 0.032);
+          },
+
+          playCorrect() {
+            this.tone(523, 0.14, "sine", 0.03);
+            setTimeout(() => this.tone(659, 0.14, "sine", 0.03), 110);
+            setTimeout(() => this.tone(784, 0.18, "sine", 0.031), 220);
+          },
+
+          playIncorrect() {
+            this.tone(400, 0.16, "sine", 0.026);
+            setTimeout(() => this.tone(300, 0.16, "sine", 0.026), 100);
+            setTimeout(() => this.tone(200, 0.2, "sine", 0.026), 200);
+          },
+
+          playStart() {
+            this.tone(330, 0.12, "sine", 0.025);
+            setTimeout(() => this.tone(440, 0.12, "sine", 0.025), 130);
+            setTimeout(() => this.tone(550, 0.15, "sine", 0.025), 260);
+          },
+
+          playGameOver() {
+            this.tone(550, 0.16, "sine", 0.024);
+            setTimeout(() => this.tone(440, 0.16, "sine", 0.024), 140);
+            setTimeout(() => this.tone(330, 0.2, "sine", 0.024), 280);
+          },
+        };
+
+        const LEVEL_TABLE = [
+          { len: 2, flash: 800, pause: 600 },
+          { len: 3, flash: 700, pause: 500 },
+          { len: 4, flash: 600, pause: 400 },
+          { len: 5, flash: 500, pause: 400 },
+          { len: 6, flash: 500, pause: 300 },
+          { len: 7, flash: 400, pause: 300 },
+        ];
+
+        const ui = {
+          menuScreen: document.getElementById("menuScreen"),
+          gameScreen: document.getElementById("gameScreen"),
+          resultScreen: document.getElementById("resultScreen"),
+          menuStartBtn: document.getElementById("menuStartBtn"),
+          playAgainBtn: document.getElementById("playAgainBtn"),
+          resultBackBtn: document.getElementById("resultBackBtn"),
+          gameBackBtn: document.getElementById("gameBackBtn"),
+          resultHeaderBackBtn: document.getElementById("resultHeaderBackBtn"),
+          gameLevelBadge: document.getElementById("gameLevelBadge"),
+          resultLevelBadge: document.getElementById("resultLevelBadge"),
+          phaseText: document.getElementById("phaseText"),
+          progressText: document.getElementById("progressText"),
+          scoreValue: document.getElementById("scoreValue"),
+          levelValue: document.getElementById("levelValue"),
+          lengthValue: document.getElementById("lengthValue"),
+          failValue: document.getElementById("failValue"),
+          stepValue: document.getElementById("stepValue"),
+          bestStreakValue: document.getElementById("bestStreakValue"),
+          padLeft: document.getElementById("padLeft"),
+          padRight: document.getElementById("padRight"),
+          gameArea: document.getElementById("gameArea"),
+          pausedOverlay: document.getElementById("pausedOverlay"),
+          resultScore: document.getElementById("resultScore"),
+          resultLevel: document.getElementById("resultLevel"),
+          resultFails: document.getElementById("resultFails"),
+          resultMessage: document.getElementById("resultMessage"),
+          srAnnounce: document.getElementById("srAnnounce"),
+        };
+
+        const state = {
+          score: 0,
+          level: 1,
+          failures: 0,
+          totalCorrectSteps: 0,
+          phase: "idle",
+          expected: [],
+          replayIndex: 0,
+          bestRememberedSteps: 0,
+          successStreak: 0,
+          failStreak: 0,
+          inputUnsubscribe: null,
+          timers: [],
+          paused: false,
+          phaseBeforePause: "idle",
+        };
+
+        function pickMessage(messages) {
+          return messages[Math.floor(Math.random() * messages.length)];
+        }
+
+        function announce(text) {
+          ui.srAnnounce.textContent = text;
+        }
+
+        function showScreen(name) {
+          ui.menuScreen.classList.remove("active");
+          ui.gameScreen.classList.remove("active");
+          ui.resultScreen.classList.remove("active");
+
+          if (name === "menu") {
+            ui.menuScreen.classList.add("active");
+          }
+          if (name === "game") {
+            ui.gameScreen.classList.add("active");
+            focusGameArea(true);
+          }
+          if (name === "result") {
+            ui.resultScreen.classList.add("active");
+          }
+        }
+
+        function goToMenu() {
+          clearTimers();
+          state.phase = "idle";
+          state.paused = false;
+          state.phaseBeforePause = "idle";
+          ui.pausedOverlay.hidden = true;
+          showScreen("menu");
+        }
+
+        function goBack() {
+          if (ui.gameScreen.classList.contains("active")) {
+            endGame();
+            return;
+          }
+          parent.goBack();
+        }
+
+        function focusGameArea(shouldScroll) {
+          ui.gameArea.focus({ preventScroll: true });
+          if (shouldScroll) {
+            ui.gameArea.scrollIntoView({
+              behavior: "auto",
+              block: "nearest",
+              inline: "nearest",
+            });
+          }
+        }
+
+        function clearTimers() {
+          state.timers.forEach((id) => clearTimeout(id));
+          state.timers = [];
+        }
+
+        function resetPadStates() {
+          ui.padLeft.classList.remove("flash", "correct", "wrong", "awaiting");
+          ui.padRight.classList.remove("flash", "correct", "wrong", "awaiting");
+        }
+
+        function setReplayGuidance(on) {
+          if (on) {
+            ui.padLeft.classList.add("awaiting");
+            ui.padRight.classList.add("awaiting");
+            ui.padLeft.classList.add("interactive");
+            ui.padRight.classList.add("interactive");
+            ui.padLeft.setAttribute("aria-disabled", "false");
+            ui.padRight.setAttribute("aria-disabled", "false");
+            return;
+          }
+          ui.padLeft.classList.remove("awaiting");
+          ui.padRight.classList.remove("awaiting");
+          ui.padLeft.classList.remove("interactive");
+          ui.padRight.classList.remove("interactive");
+          ui.padLeft.setAttribute("aria-disabled", "true");
+          ui.padRight.setAttribute("aria-disabled", "true");
+        }
+
+        function handleDirectionalInput(direction) {
+          if (state.phase !== "replay") {
+            return;
+          }
+          handleReplayInput(direction);
+        }
+
+        function flashPad(direction, stateClass, duration) {
+          const pad = direction === "left" ? ui.padLeft : ui.padRight;
+          pad.classList.add(stateClass);
+          const t = setTimeout(() => {
+            pad.classList.remove(stateClass);
+          }, duration || 280);
+          state.timers.push(t);
+        }
+
+        function currentLevelConfig() {
+          return LEVEL_TABLE[Math.min(state.level - 1, LEVEL_TABLE.length - 1)];
+        }
+
+        function updateScoreboard() {
+          const config = currentLevelConfig();
+          ui.scoreValue.textContent = String(state.score);
+          ui.levelValue.textContent = String(state.level);
+          ui.lengthValue.textContent = String(config.len);
+          ui.failValue.textContent = String(state.failures);
+          ui.stepValue.textContent = String(state.totalCorrectSteps);
+          ui.bestStreakValue.textContent = String(state.bestRememberedSteps);
+          ui.gameLevelBadge.textContent = "Level " + String(state.level);
+          ui.resultLevelBadge.textContent = "Level " + String(state.level);
+        }
+
+        function buildSequence() {
+          const config = currentLevelConfig();
+          const sequence = [];
+          let previous = null;
+          let runLength = 0;
+
+          for (let i = 0; i < config.len; i += 1) {
+            let next;
+
+            if (i === 0) {
+              next = Math.random() < 0.5 ? "left" : "right";
+            } else if (state.level <= 2) {
+              next = previous === "left" ? "right" : "left";
+            } else {
+              next = Math.random() < 0.5 ? "left" : "right";
+              if (runLength >= 2 && next === previous) {
+                next = previous === "left" ? "right" : "left";
+              }
+            }
+
+            if (next === previous) {
+              runLength += 1;
+            } else {
+              runLength = 1;
+            }
+
+            previous = next;
+            sequence.push(next);
+          }
+          return sequence;
+        }
+
+        function setStatus(main, sub) {
+          ui.phaseText.textContent = main;
+          ui.progressText.textContent = sub;
+          ui.phaseText.classList.remove(
+            "status-ok",
+            "status-info",
+            "status-warn",
+          );
+          if (/incorrect|failed|paused|almost/i.test(main)) {
+            ui.phaseText.classList.add("status-warn");
+          } else if (/great|excellent|nice|welcome|correct/i.test(main)) {
+            ui.phaseText.classList.add("status-ok");
+          } else {
+            ui.phaseText.classList.add("status-info");
+          }
+          announce(main + " " + sub);
+        }
+
+        function setIdleView() {
+          ui.gameArea.classList.remove("idle");
+          ui.gameScreen.classList.remove("prestart");
+        }
+
+        function startCountdownThenRound() {
+          setStatus("Get ready...", "Round starts in 3");
+          state.phase = "countdown";
+          setIdleView();
+          SoundEngine.playTick();
+
+          [2, 1].forEach((n, idx) => {
+            const t = setTimeout(
+              () => {
+                setStatus("Get ready...", "Round starts in " + String(n));
+                SoundEngine.playTick();
+              },
+              (idx + 1) * 700,
+            );
+            state.timers.push(t);
+          });
+
+          const finalTimer = setTimeout(() => {
+            SoundEngine.playStart();
+            runRound();
+          }, 2300);
+          state.timers.push(finalTimer);
+        }
+
+        function runRound() {
+          state.expected = buildSequence();
+          state.replayIndex = 0;
+          setReplayGuidance(false);
+          setStatus(
+            "Watch carefully...",
+            "Sequence length: " + String(state.expected.length),
+          );
+          state.phase = "watch";
+          playSequence();
+        }
+
+        function playSequence() {
+          const config = currentLevelConfig();
+          resetPadStates();
+
+          state.expected.forEach((direction, idx) => {
+            const onTimer = setTimeout(
+              () => {
+                flashPad(direction, "flash", config.flash - 20);
+                if (direction === "left") {
+                  SoundEngine.playLeftSignal();
+                } else {
+                  SoundEngine.playRightSignal();
+                }
+              },
+              idx * (config.flash + config.pause),
+            );
+            state.timers.push(onTimer);
+          });
+
+          const doneTimer = setTimeout(
+            () => {
+              state.phase = "replay";
+              setReplayGuidance(true);
+              setStatus(
+                "Your turn!",
+                "Step 1 of " + String(state.expected.length),
+              );
+            },
+            state.expected.length * (config.flash + config.pause) + 80,
+          );
+          state.timers.push(doneTimer);
+        }
+
+        function onSuccessfulSequence() {
+          state.successStreak += 1;
+          state.failStreak = 0;
+          const basePoints = state.expected.length * 2;
+          const streakBonus = Math.min(3, Math.max(0, state.successStreak - 1));
+          const zeroErrorBonus = 1;
+          const sequencePoints = basePoints + streakBonus + zeroErrorBonus;
+          state.score += sequencePoints;
+          if (state.level < LEVEL_TABLE.length && state.successStreak >= 1) {
+            state.level += 1;
+          }
+          SoundEngine.playCorrect();
+          setReplayGuidance(false);
+          setStatus(
+            pickMessage(SUCCESS_MESSAGES),
+            "+" +
+              String(sequencePoints) +
+              " points \u00b7 remembered " +
+              String(state.expected.length) +
+              " steps",
+          );
+          updateScoreboard();
+
+          const nextTimer = setTimeout(() => {
+            runRound();
+          }, 1200);
+          state.timers.push(nextTimer);
+        }
+
+        function endGame() {
+          clearTimers();
+          state.phase = "done";
+          setReplayGuidance(false);
+          SoundEngine.playGameOver();
+          if (state.inputUnsubscribe) {
+            state.inputUnsubscribe();
+            state.inputUnsubscribe = null;
+          }
+
+          ui.resultScore.textContent = String(state.score);
+          ui.resultLevel.textContent = String(state.level);
+          ui.resultFails.textContent = String(state.failures);
+          if (state.score >= 50) {
+            ui.resultMessage.textContent = "Fantastic work!";
+          } else if (state.score >= 24) {
+            ui.resultMessage.textContent = "Great effort! Keep practising!";
+          } else {
+            ui.resultMessage.textContent =
+              "Good try! You will do even better next time!";
+          }
+          showScreen("result");
+        }
+
+        function onFailedSequence() {
+          state.failures += 1;
+          state.failStreak += 1;
+          state.successStreak = 0;
+
+          if (state.failStreak >= 2 && state.level > 1) {
+            state.level -= 1;
+            state.failStreak = 0;
+          }
+
+          SoundEngine.playIncorrect();
+          setReplayGuidance(false);
+          setStatus(
+            pickMessage(FAIL_MESSAGES),
+            "Failed " +
+              String(state.failures) +
+              " of 3 \u00b7 level " +
+              String(state.level),
+          );
+          updateScoreboard();
+
+          if (state.failures >= 3) {
+            endGame();
+            return;
+          }
+
+          const retryTimer = setTimeout(() => {
+            runRound();
+          }, 1400);
+          state.timers.push(retryTimer);
+        }
+
+        function handleReplayInput(direction) {
+          const expectedDirection = state.expected[state.replayIndex];
+
+          if (direction === expectedDirection) {
+            state.totalCorrectSteps += 1;
+            flashPad(direction, "correct", 240);
+            state.replayIndex += 1;
+            state.bestRememberedSteps = Math.max(
+              state.bestRememberedSteps,
+              state.replayIndex,
+            );
+
+            if (state.replayIndex < state.expected.length) {
+              setStatus(
+                "Your turn!",
+                "Step " +
+                  String(state.replayIndex + 1) +
+                  " of " +
+                  String(state.expected.length),
+              );
+            } else {
+              state.phase = "feedback";
+              onSuccessfulSequence();
+            }
+          } else {
+            const partial = state.replayIndex;
+            if (partial > 0) {
+              state.score += partial;
+            }
+            flashPad(direction, "wrong", 320);
+            state.phase = "feedback";
+            onFailedSequence();
+          }
+
+          updateScoreboard();
+        }
+
+        function resetRunStats() {
+          clearTimers();
+          state.score = 0;
+          state.level = 1;
+          state.failures = 0;
+          state.totalCorrectSteps = 0;
+          state.phase = "idle";
+          state.expected = [];
+          state.replayIndex = 0;
+          state.bestRememberedSteps = 0;
+          state.successStreak = 0;
+          state.failStreak = 0;
+          state.paused = false;
+          state.phaseBeforePause = "idle";
+          resetPadStates();
+          setIdleView(true);
+          ui.pausedOverlay.hidden = true;
+          updateScoreboard();
+          setStatus("Get ready...", "Watch and repeat the sequence.");
+        }
+
+        function beginNewRun() {
+          SoundEngine.init();
+          startGameSession();
+          startCountdownThenRound();
+        }
+
+        function pauseGameIfNeeded() {
+          if (document.hidden) {
+            if (
+              state.phase === "idle" ||
+              state.phase === "done" ||
+              state.paused
+            ) {
+              return;
+            }
+            state.paused = true;
+            state.phaseBeforePause = state.phase;
+            state.phase = "paused";
+            clearTimers();
+            setReplayGuidance(false);
+            ui.pausedOverlay.hidden = false;
+            setStatus("Paused", "Game paused while tab was inactive.");
+            return;
+          }
+
+          if (!state.paused) {
+            return;
+          }
+
+          state.paused = false;
+          ui.pausedOverlay.hidden = true;
+          setStatus("Welcome back", "Starting a fresh round at current level.");
+          const resumeTimer = setTimeout(() => {
+            runRound();
+          }, 700);
+          state.timers.push(resumeTimer);
+        }
+
+        function startGameSession() {
+          showScreen("game");
+          resetRunStats();
+          focusGameArea(true);
+          if (state.inputUnsubscribe) {
+            state.inputUnsubscribe();
+          }
+          state.inputUnsubscribe = InputHandler.subscribe((direction) => {
+            handleDirectionalInput(direction);
+          });
+        }
+
+        function setupEvents() {
+          ui.padLeft.addEventListener("click", () => {
+            handleDirectionalInput("left");
+          });
+
+          ui.padRight.addEventListener("click", () => {
+            handleDirectionalInput("right");
+          });
+
+          ui.padLeft.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              handleDirectionalInput("left");
+            }
+          });
+
+          ui.padRight.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              handleDirectionalInput("right");
+            }
+          });
+
+          wireBtn("menuStartBtn", beginNewRun);
+          wireBtn("playAgainBtn", beginNewRun);
+          wireBtn("resultBackBtn", goToMenu);
+          wireBtn("gameBackBtn", goBack);
+          wireBtn("resultHeaderBackBtn", goToMenu);
+
+          document.addEventListener("visibilitychange", pauseGameIfNeeded);
+          window.addEventListener("resize", () => {
+            if (ui.gameScreen.classList.contains("active")) {
+              focusGameArea(false);
+            }
+          });
+          window.addEventListener("orientationchange", () => {
+            if (ui.gameScreen.classList.contains("active")) {
+              setTimeout(() => focusGameArea(true), 120);
+            }
+          });
+        }
+
+        function init() {
+          InputHandler.init();
+          setupEvents();
+          updateScoreboard();
+          showScreen("menu");
+        }
+
+        function wireBtn(id, fn) {
+          const el = document.getElementById(id);
+          if (!el) return;
+          let fired = false;
+          function handle(event) {
+            event.preventDefault();
+            if (fired) return;
+            fired = true;
+            setTimeout(() => {
+              fired = false;
+            }, 400);
+            fn();
+          }
+          el.addEventListener("pointerdown", handle);
+        }
+let currentZoom = 1;
+
+window.zoomIn = function () {
+  currentZoom += 0.1;
+  applyZoom();
+};
+
+window.zoomOut = function () {
+  currentZoom -= 0.1;
+  if (currentZoom < 0.6) currentZoom = 0.6;
+  applyZoom();
+};
+
+function applyZoom() {
+  const game = document.getElementById("ctg-zoom-wrap");
+
+  game.style.transform = `scale(${currentZoom})`;
+  game.style.transformOrigin = "top center";
+
+  // 🔥 THIS IS THE FIX
+  game.style.height = `${100 / currentZoom}vh`;
+  game.style.width = `${100 / currentZoom}%`;
+}
+        init();
+      })();
+    </script>
+    <script src="shared.js" onerror="void 0"></script>
+  </body>
+</html>

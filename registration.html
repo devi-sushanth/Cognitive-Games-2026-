@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Registration</title>
+
+<style>
+
+body{
+  font-family: Arial, sans-serif;
+  background:#f8f6f3;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  margin:0;
+}
+
+.card{
+  background:white;
+  padding:30px;
+  width:90%;
+  max-width:450px;
+  border-radius:18px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.1);
+}
+
+h1{
+  margin-top:0;
+}
+
+label{
+  display:block;
+  margin-top:16px;
+  font-weight:600;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border:1px solid #ccc;
+  border-radius:10px;
+  box-sizing:border-box;
+}
+
+button{
+  margin-top:22px;
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:#e17055;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>Registration Portal</h1>
+
+<button onclick="showAdminForm()">
+Admin Registration
+</button>
+
+<button onclick="showParticipantForm()">
+Participant Registration
+</button>
+
+<!-- ADMIN FORM -->
+
+<div id="adminForm" style="display:none;">
+
+<label>Institution Name</label>
+<input type="text" id="institution">
+
+<label>Admin Name</label>
+<input type="text" id="admin">
+
+<label>Secret Admin Code</label>
+<input type="password" id="secret">
+
+<button onclick="registerInstitution()">
+Complete Admin Registration
+</button>
+
+</div>
+
+<!-- PARTICIPANT FORM -->
+
+<div id="participantForm" style="display:none;">
+
+<label>Participant Name</label>
+<input type="text" id="participantName">
+
+<label>Age</label>
+<input type="number" id="participantAge">
+
+<label>Institution Name</label>
+<input type="text" id="participantInstitution">
+
+<button onclick="addParticipant()">
+Register Participant
+</button>
+  <div id="participantList"></div>
+
+</div>
+
+</div>
+
+<script>
+  let isAdminLoggedIn = false;
+
+function showAdminForm(){
+
+  document.getElementById("adminForm").style.display = "block";
+
+  document.getElementById("participantForm").style.display = "none";
+}
+
+function showParticipantForm(){
+
+  document.getElementById("participantForm").style.display = "block";
+
+  document.getElementById("adminForm").style.display = "none";
+}
+
+/* ADMIN REGISTRATION */
+
+function registerInstitution(){
+
+  const institution =
+    document.getElementById("institution").value.trim();
+
+  const admin =
+    document.getElementById("admin").value.trim();
+
+  const secret =
+    document.getElementById("secret").value.trim();
+
+  const savedInstitution =
+  localStorage.getItem("ctg_institution");
+
+const savedSecret =
+  localStorage.getItem("ctg_admin_secret");
+
+/* IF INSTITUTION ALREADY EXISTS */
+
+if(savedInstitution === institution){
+
+  if(savedSecret !== secret){
+
+    alert("Wrong Secret Code");
+    return;
+  }
+
+  alert("Admin Login Successful");
+
+  localStorage.setItem(
+    "ctg_registered",
+    "true"
+  );
+
+  localStorage.setItem(
+    "ctg_role",
+    "admin"
+  );
+
+  window.location.href = "index.html";
+  return;
+}
+
+  if(!institution || !admin || !secret){
+
+    alert("Please fill all fields");
+    return;
+  }
+
+  /* SAVE ADMIN DETAILS */
+
+  localStorage.setItem(
+    "ctg_registered",
+    "true"
+  );
+
+  localStorage.setItem(
+    "ctg_institution",
+    institution
+  );
+
+  localStorage.setItem(
+    "ctg_admin",
+    admin
+  );
+
+  /* ADMIN CREATES SECRET CODE */
+
+  localStorage.setItem(
+    "ctg_admin_secret",
+    secret
+  );
+
+  /* MARK THIS USER AS ADMIN */
+
+  localStorage.setItem(
+    "ctg_role",
+    "admin"
+  );
+
+  /* CREATE PARTICIPANT STORAGE */
+
+  if(!localStorage.getItem("ctg_participants")){
+
+    localStorage.setItem(
+      "ctg_participants",
+      JSON.stringify([])
+    );
+  }
+
+  logActivity(
+    "Institution Registered : " + institution
+  );
+
+  alert("Admin registration successful");
+
+  window.location.href = "index.html";
+}
+
+/* PARTICIPANT REGISTRATION */
+function addParticipant(){
+
+  const name =
+    document.getElementById("participantName").value.trim();
+
+  const age =
+    document.getElementById("participantAge").value.trim();
+
+  const institution =
+  document.getElementById(
+    "participantInstitution"
+  ).value.trim();
+
+
+  if(!name || !age || !institution){
+
+    alert("Please fill all fields");
+    return;
+  }
+
+  let participants =
+    JSON.parse(
+      localStorage.getItem("ctg_participants")
+    ) || [];
+
+  participants.push({
+    name,
+    age,
+    institution
+  });
+
+  localStorage.setItem(
+    "ctg_participants",
+    JSON.stringify(participants)
+  );
+
+  /* MARK USER AS PARTICIPANT */
+
+  localStorage.setItem(
+    "ctg_registered",
+    "true"
+  );
+
+  localStorage.setItem(
+    "ctg_role",
+    "participant"
+  );
+
+    localStorage.setItem(
+  "ctg_current_participant",
+  name
+);
+
+  logActivity(
+    "Participant Added : " + name
+  );
+
+  alert("Participant registered successfully");
+
+  window.location.href = "index.html";
+}
+
+/* PARTICIPANT LIST */
+
+function renderParticipants(){
+
+  const adminInstitution =
+  localStorage.getItem(
+    "ctg_institution"
+  );
+
+  let participants =
+    JSON.parse(
+      localStorage.getItem("ctg_participants")
+    ) || [];
+
+  let html = "";
+
+  participants.forEach((p,index)=>{
+
+    html += `
+      <div style="
+        margin-top:15px;
+        padding:10px;
+        border:1px solid #ccc;
+        border-radius:10px;
+      ">
+
+        <b>${p.name}</b><br>
+        Age : ${p.age}<br>
+        ID : ${p.id}<br><br>
+
+       ${
+  localStorage.getItem("ctg_role") === "admin"
+  ?
+  `
+  <button onclick="deleteParticipant(${index})">
+    Delete
+  </button>
+  `
+  :
+  ""
+}
+
+      </div>
+    `;
+  });
+
+  document.getElementById(
+    "participantList"
+  ).innerHTML = html;
+}
+
+function deleteParticipant(index){
+
+  const confirmDelete =
+    confirm("Are you sure?");
+
+  if(!confirmDelete){
+    return;
+  }
+
+  const word =
+    prompt("Type DELETE to confirm");
+
+  if(word !== "DELETE"){
+
+    alert("Deletion cancelled");
+    return;
+  }
+
+  let participants =
+    JSON.parse(
+      localStorage.getItem("ctg_participants")
+    ) || [];
+
+  const removed =
+    participants[index];
+
+  participants.splice(index,1);
+
+  localStorage.setItem(
+    "ctg_participants",
+    JSON.stringify(participants)
+  );
+
+  logActivity(
+    "Participant Deleted : " + removed.name
+  );
+
+  renderParticipants();
+}
+
+/* ACTIVITY LOG */
+
+function logActivity(message){
+
+  let logs =
+    JSON.parse(
+      localStorage.getItem("ctg_logs")
+    ) || [];
+
+  logs.push({
+    message,
+    time: new Date().toLocaleString()
+  });
+
+  localStorage.setItem(
+    "ctg_logs",
+    JSON.stringify(logs)
+  );
+}
+renderParticipants();
+</script>
+
+</body>
+</html>
