@@ -399,15 +399,34 @@ function generateComparison(range){
         }
     }
 
-    if(mainDisplay){
+    document.getElementById("backBtn")
+.addEventListener("click", function(){
 
-        mainDisplay.innerHTML = `
-            <div class="option-container">
-                <div>${num1}</div>
-                <div>${num2}</div>
-            </div>
-        `;
+    let confirmExit = confirm("Exit the game?");
+
+    if(confirmExit){
+
+        clearInterval(timer);
+
+        if(window.parent && typeof window.parent.goBack === "function"){
+            window.parent.goBack();
+        }
     }
+});
+    document.getElementById("introBackBtn")
+.addEventListener("click", function(){
+
+    let confirmExit = confirm("Exit the game?");
+
+    if(confirmExit){
+
+        clearInterval(timer);
+
+        if(window.parent && typeof window.parent.goBack === "function"){
+            window.parent.goBack();
+        }
+    }
+});
 
     if(leftBtn){
         leftBtn.innerText = "LEFT";
