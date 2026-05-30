@@ -400,42 +400,16 @@ document.getElementById("rightBtn")
     checkAnswer("RIGHT");
 });
 
-// =======================
-// BACK BUTTON
-// =======================
+if(confirmExit){
 
-document.getElementById("backBtn")
-.addEventListener("click", function(){
+    clearInterval(timer);
 
-    let confirmExit = confirm("Exit the game?");
-
-    if(confirmExit){
-
-        window.location.href = "index.html";
-
-        // OR:
-        // history.back();
+    if(window.parent !== window){
+        window.parent.history.back();
+    } else {
+        history.back();
     }
-});
-
-// =======================
-// INTRO BACK BUTTON
-// =======================
-
-document.getElementById("introBackBtn")
-.addEventListener("click", function(){
-
-    let confirmExit = confirm("Exit the game?");
-
-    if(confirmExit){
-
-        window.location.href = "index.html";
-
-        // OR:
-        // history.back();
-    }
-});
-
+}
 // =======================
 // SOUND TOGGLE
 // =======================
