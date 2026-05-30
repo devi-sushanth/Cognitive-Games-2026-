@@ -137,7 +137,7 @@ You only need:
 ### Clone Repository
 
 ```bash
-git clone https://github.com/kip23theo/Cognitive-Games.git
+git clone https://github.com/kip23theo/Cognitive-Games.git](https://devi-sushanth.github.io/Cognitive-Games-2026-/
 ```
 
 ### Run Locally
