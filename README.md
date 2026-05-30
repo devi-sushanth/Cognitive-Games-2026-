@@ -121,8 +121,7 @@ Cognitive-Games/
 ## 🚀 Live Deployment
 
 🔗 **GitHub Pages Deployment:**  
-https://kip23theo.github.io/Cognitive-Games/
-
+https://devi-sushanth.github.io/Cognitive-Games-2026-/
 ---
 
 ## 🚀 Getting Started
